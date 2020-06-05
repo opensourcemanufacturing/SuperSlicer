@@ -1550,6 +1550,7 @@ void PrintConfigDef::init_fff_params()
                    "Set this option to your printer's firmware to get a compatible output. "
                    "The \"No extrusion\" flavor prevents Slic3r from exporting any extrusion value at all.");
     def->enum_keys_map = &ConfigOptionEnum<GCodeFlavor>::get_enum_values();
+    def->enum_values.push_back("openfl");
     def->enum_values.push_back("reprap");
     def->enum_values.push_back("repetier");
     def->enum_values.push_back("teacup");
@@ -1568,14 +1569,13 @@ void PrintConfigDef::init_fff_params()
     def->enum_labels.push_back("MakerWare (MakerBot)");
     def->enum_labels.push_back("Marlin");
     def->enum_labels.push_back("Klipper");
-    def->enum_labels.push_back("Sailfish (MakerBot)");
     def->enum_labels.push_back("Mach3/LinuxCNC");
     def->enum_labels.push_back("Machinekit");
     def->enum_labels.push_back("Smoothie");
     def->enum_labels.push_back("Lerdge");
     def->enum_labels.push_back(L("No extrusion"));
     def->mode = comAdvanced;
-    def->set_default_value(new ConfigOptionEnum<GCodeFlavor>(gcfRepRap));
+    def->set_default_value(new ConfigOptionEnum<GCodeFlavor>(gcfopenfl));
 
     def = this->add("gcode_label_objects", coBool);
     def->label = L("Label objects");

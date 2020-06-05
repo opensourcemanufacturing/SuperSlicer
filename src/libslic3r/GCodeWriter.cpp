@@ -8,7 +8,7 @@
 
 #define FLAVOR_IS(val) this->config.gcode_flavor == val
 #define FLAVOR_IS_NOT(val) this->config.gcode_flavor != val
-#define COMMENT(comment) if (this->config.gcode_comments && !comment.empty()) gcode << " ; " << comment;
+#define COMMENT(comment); if (this->config.gcode_comments && !comment.empty()) gcode << " ; " << comment;
 #define PRECISION(val, precision) std::fixed << std::setprecision(precision) << val
 #define XYZF_NUM(val) PRECISION(val, 3)
 #define E_NUM(val) PRECISION(val, 5)
@@ -57,12 +57,12 @@ std::string GCodeWriter::preamble()
 {
     std::ostringstream gcode;
     
-    if (FLAVOR_IS_NOT(gcfMakerWare)) {
+    if (FLAVOR_IS_NOT(gcfMakerWare) || FLAVOR_IS_NOT(gcfopenfl)) {
         gcode << "G21 ; set units to millimeters\n";
         gcode << "G90 ; use absolute coordinates\n";
     }
     if (FLAVOR_IS(gcfRepRap) || FLAVOR_IS(gcfMarlin) || FLAVOR_IS(gcfTeacup) || FLAVOR_IS(gcfRepetier) || FLAVOR_IS(gcfSmoothie)
-		 || FLAVOR_IS(gcfKlipper) || FLAVOR_IS(gcfLerdge)) {
+		 || FLAVOR_IS(gcfKlipper) || FLAVOR_IS(gcfLerdge) || FLAVOR_IS_NOT(gcfopenfl)) {
         if (this->config.use_relative_e_distances) {
             gcode << "M83 ; use relative distances for extrusion\n";
         } else {
@@ -159,7 +159,7 @@ std::string GCodeWriter::set_fan(unsigned int speed, bool dont_save)
     if (m_last_fan_speed != speed || dont_save) {
         if (!dont_save) m_last_fan_speed = speed;
         
-        if (speed == 0) {
+        if (speed == 0 || FLAVOR_IS_NOT(gcfopenfl)) {
             if (FLAVOR_IS(gcfTeacup)) {
                 gcode << "M106 S0";
             } else if (FLAVOR_IS(gcfMakerWare) || FLAVOR_IS(gcfSailfish)) {
@@ -303,28 +303,51 @@ std::string GCodeWriter::toolchange(unsigned int tool_id)
 
 std::string GCodeWriter::set_speed(double F, const std::string &comment, const std::string &cooling_marker) const
 {
-    assert(F > 0.);
-    assert(F < 100000.);
-    std::ostringstream gcode;
-    gcode << "G1 F" << XYZF_NUM(F);
-    COMMENT(comment);
-    gcode << cooling_marker;
-    gcode << "\n";
-    return gcode.str();
+    if (FLAVOR_IS(gcfopenfl)){
+        assert(F > 0.);
+        assert(F < 100000.);
+        std::ostringstream gcode;
+        gcode << "0x04 ZFeedRate" << XYZF_NUM(F);
+        COMMENT(comment);
+        gcode << cooling_marker;
+        gcode << "\n";
+        return gcode.str();
+    } else {
+        assert(F > 0.);
+        assert(F < 100000.);
+        std::ostringstream gcode;
+        gcode << "G1 F" << XYZF_NUM(F);
+        COMMENT(comment);
+        gcode << cooling_marker;
+        gcode << "\n";
+        return gcode.str();
+    }
 }
 
 std::string GCodeWriter::travel_to_xy(const Vec2d &point, const std::string &comment)
 {
-    m_pos.x() = point.x();
-    m_pos.y() = point.y();
+    if (FLAVOR_IS(gcfopenfl)){
+        m_pos.x() = point.x();
+        m_pos.y() = point.y();
     
-    std::ostringstream gcode;
-    gcode << "G1 X" << XYZF_NUM(point.x())
-          <<   " Y" << XYZF_NUM(point.y())
-          <<   " F" << XYZF_NUM(this->config.travel_speed.value * 60.0);
-    COMMENT(comment);
-    gcode << "\n";
-    return gcode.str();
+        std::ostringstream gcode;
+        gcode << "X" << XYZF_NUM(point.x())
+            <<   "Y" << XYZF_NUM(point.y())
+        COMMENT(comment);
+        gcode << "\n";
+        return gcode.str();
+    } else {
+        m_pos.x() = point.x();
+        m_pos.y() = point.y();
+    
+        std::ostringstream gcode;
+        gcode << "G1 X" << XYZF_NUM(point.x())
+            <<   " Y" << XYZF_NUM(point.y())
+            <<   " F" << XYZF_NUM(this->config.travel_speed.value * 60.0);
+        COMMENT(comment);
+        gcode << "\n";
+        return gcode.str();
+    }
 }
 
 std::string GCodeWriter::travel_to_xyz(const Vec3d &point, const std::string &comment)
@@ -333,29 +356,29 @@ std::string GCodeWriter::travel_to_xyz(const Vec3d &point, const std::string &co
         don't perform the Z move but we only move in the XY plane and
         adjust the nominal Z by reducing the lift amount that will be 
         used for unlift. */
-    if (!this->will_move_z(point.z())) {
-        double nominal_z = m_pos.z() - m_lifted;
-        m_lifted -= (point.z() - nominal_z);
-        // In case that retract_lift == layer_height we could end up with almost zero in_m_lifted
-        // and a retract could be skipped (https://github.com/prusa3d/PrusaSlicer/issues/2154
-        if (std::abs(m_lifted) < EPSILON)
-            m_lifted = 0.;
-        return this->travel_to_xy(to_2d(point));
-    }
-    
-    /*  In all the other cases, we perform an actual XYZ move and cancel
-        the lift. */
-    m_lifted = 0;
-    m_pos = point;
-    
-    std::ostringstream gcode;
-    gcode << "G1 X" << XYZF_NUM(point.x())
-          <<   " Y" << XYZF_NUM(point.y())
-          <<   " Z" << XYZF_NUM(point.z())
-          <<   " F" << XYZF_NUM(this->config.travel_speed.value * 60.0);
-    COMMENT(comment);
-    gcode << "\n";
-    return gcode.str();
+        if (!this->will_move_z(point.z())) {
+            double nominal_z = m_pos.z() - m_lifted;
+            m_lifted -= (point.z() - nominal_z);
+            // In case that retract_lift == layer_height we could end up with almost zero in_m_lifted
+            // and a retract could be skipped (https://github.com/prusa3d/PrusaSlicer/issues/2154
+            if (std::abs(m_lifted) < EPSILON)
+                m_lifted = 0.;
+            return this->travel_to_xy(to_2d(point));
+        }
+        
+        /*  In all the other cases, we perform an actual XYZ move and cancel
+            the lift. */
+        m_lifted = 0;
+        m_pos = point;
+        
+        std::ostringstream gcode;
+        gcode << "G1 X" << XYZF_NUM(point.x())
+              <<   " Y" << XYZF_NUM(point.y())
+              <<   " Z" << XYZF_NUM(point.z())
+              <<   " F" << XYZF_NUM(this->config.travel_speed.value * 60.0);
+        COMMENT(comment);
+        gcode << "\n";
+        return gcode.str();
 }
 
 std::string GCodeWriter::travel_to_z(double z, const std::string &comment)
@@ -379,14 +402,25 @@ std::string GCodeWriter::travel_to_z(double z, const std::string &comment)
 
 std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
 {
-    m_pos.z() = z;
-    
-    std::ostringstream gcode;
-    gcode << "G1 Z" << XYZF_NUM(z)
-          <<   " F" << XYZF_NUM(this->config.travel_speed.value * 60.0);
-    COMMENT(comment);
-    gcode << "\n";
-    return gcode.str();
+    if(FLAVOR_IS(gcfopenfl)){        
+        m_pos.z() = z;
+        
+        std::ostringstream gcode;
+        gcode << "0x04 ZFeedRate" << XYZF_NUM(z)
+              <<   " F" << XYZF_NUM(this->config.travel_speed.value * 60.0);
+        COMMENT(comment);
+        gcode << "\n";
+        return gcode.str();
+    } else {
+        m_pos.z() = z;
+        
+        std::ostringstream gcode;
+        gcode << "G1 Z" << XYZF_NUM(z)
+              <<   " F" << XYZF_NUM(this->config.travel_speed.value * 60.0);
+        COMMENT(comment);
+        gcode << "\n";
+        return gcode.str();
+    }
 }
 
 bool GCodeWriter::will_move_z(double z) const
@@ -419,20 +453,20 @@ std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std:
 
 std::string GCodeWriter::extrude_to_xyz(const Vec3d &point, double dE, const std::string &comment)
 {
-    m_pos.x() = point.x();
-    m_pos.y() = point.y();
-    m_lifted = 0;
-    bool is_extrude = m_tool->extrude(dE) != 0;
-    
-    std::ostringstream gcode;
-    gcode << "G1 X" << XYZF_NUM(point.x())
-        << " Y" << XYZF_NUM(point.y())
-        << " Z" << XYZF_NUM(point.z() + m_pos.z());
-    if (is_extrude)
-            gcode <<    " " << m_extrusion_axis << E_NUM(m_tool->E());
-    COMMENT(comment);
-    gcode << "\n";
-    return gcode.str();
+        m_pos.x() = point.x();
+        m_pos.y() = point.y();
+        m_lifted = 0;
+        bool is_extrude = m_tool->extrude(dE) != 0;
+        
+        std::ostringstream gcode;
+        gcode << "G1 X" << XYZF_NUM(point.x())
+            << " Y" << XYZF_NUM(point.y())
+            << " Z" << XYZF_NUM(point.z() + m_pos.z());
+        if (is_extrude)
+                gcode <<    " " << m_extrusion_axis << E_NUM(m_tool->E());
+        COMMENT(comment);
+        gcode << "\n";
+        return gcode.str();
 }
 
 std::string GCodeWriter::retract(bool before_wipe)

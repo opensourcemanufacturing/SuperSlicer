@@ -49,7 +49,7 @@ enum WipeAlgo {
 
 enum GCodeFlavor : uint8_t {
     gcfRepRap, gcfRepetier, gcfTeacup, gcfMakerWare, gcfMarlin, gcfKlipper, gcfSailfish, gcfMach3, gcfMachinekit,
-    gcfSmoothie, gcfNoExtrusion, gcfLerdge,
+    gcfSmoothie, gcfNoExtrusion, gcfLerdge, gcfopenfl,
 };
 
 enum PrintHostType {
@@ -145,6 +145,7 @@ template<> inline const t_config_enum_values& ConfigOptionEnum<GCodeFlavor>::get
         keys_map["mach3"]           = gcfMach3;
         keys_map["machinekit"]      = gcfMachinekit;
         keys_map["no-extrusion"]    = gcfNoExtrusion;
+	keys_map["openfl"]	    = gcfopenfl;
     }
     return keys_map;
 }
