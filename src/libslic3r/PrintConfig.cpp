@@ -1550,7 +1550,7 @@ void PrintConfigDef::init_fff_params()
                    "Set this option to your printer's firmware to get a compatible output. "
                    "The \"No extrusion\" flavor prevents Slic3r from exporting any extrusion value at all.");
     def->enum_keys_map = &ConfigOptionEnum<GCodeFlavor>::get_enum_values();
-    def->enum_values.push_back("openfl");
+    def->enum_values.push_back("OpenFL");
     def->enum_values.push_back("reprap");
     def->enum_values.push_back("repetier");
     def->enum_values.push_back("teacup");
@@ -1563,7 +1563,7 @@ void PrintConfigDef::init_fff_params()
     def->enum_values.push_back("smoothie");
     def->enum_values.push_back("lerdge");
     def->enum_values.push_back("no-extrusion");
-    def->enum_labels.push_back("openfl");
+    def->enum_labels.push_back("OpenFL");
     def->enum_labels.push_back("RepRap/Sprinter");
     def->enum_labels.push_back("Repetier");
     def->enum_labels.push_back("Teacup");

@@ -145,7 +145,7 @@ template<> inline const t_config_enum_values& ConfigOptionEnum<GCodeFlavor>::get
         keys_map["mach3"]           = gcfMach3;
         keys_map["machinekit"]      = gcfMachinekit;
         keys_map["no-extrusion"]    = gcfNoExtrusion;
-	keys_map["openfl"]	    = gcfopenfl;
+	keys_map["OpenFL"]	    = gcfopenfl;
     }
     return keys_map;
 }
