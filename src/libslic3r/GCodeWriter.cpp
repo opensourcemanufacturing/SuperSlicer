@@ -8,7 +8,7 @@
 
 #define FLAVOR_IS(val) this->config.gcode_flavor == val
 #define FLAVOR_IS_NOT(val) this->config.gcode_flavor != val
-#define COMMENT(comment); if (this->config.gcode_comments && !comment.empty()) gcode << " ; " << comment;
+#define COMMENT(comment) if (this->config.gcode_comments && !comment.empty()) gcode << " ; " << comment;
 #define PRECISION(val, precision) std::fixed << std::setprecision(precision) << val
 #define XYZF_NUM(val) PRECISION(val, 3)
 #define E_NUM(val) PRECISION(val, 5)
@@ -332,7 +332,7 @@ std::string GCodeWriter::travel_to_xy(const Vec2d &point, const std::string &com
     
         std::ostringstream gcode;
         gcode << "X" << XYZF_NUM(point.x())
-            <<   "Y" << XYZF_NUM(point.y())
+            <<   "Y" << XYZF_NUM(point.y());
         COMMENT(comment);
         gcode << "\n";
         return gcode.str();
