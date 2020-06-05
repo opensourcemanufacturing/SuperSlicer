@@ -1563,6 +1563,7 @@ void PrintConfigDef::init_fff_params()
     def->enum_values.push_back("smoothie");
     def->enum_values.push_back("lerdge");
     def->enum_values.push_back("no-extrusion");
+    def->enum_labels.push_back("openfl");
     def->enum_labels.push_back("RepRap/Sprinter");
     def->enum_labels.push_back("Repetier");
     def->enum_labels.push_back("Teacup");
@@ -1575,7 +1576,7 @@ void PrintConfigDef::init_fff_params()
     def->enum_labels.push_back("Lerdge");
     def->enum_labels.push_back(L("No extrusion"));
     def->mode = comAdvanced;
-    def->set_default_value(new ConfigOptionEnum<GCodeFlavor>(gcfopenfl));
+    def->set_default_value(new ConfigOptionEnum<GCodeFlavor>(gcfRepRap));
 
     def = this->add("gcode_label_objects", coBool);
     def->label = L("Label objects");
