@@ -442,7 +442,7 @@ bool GCodeWriter::will_move_z(double z) const
 
 slapoint (Long fdmpoint) {
         int laserpoint = std::llround(fdmpoint * 524.288);
-        return laserpoint;
+        return laserpoint();
     }
 
 std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std::string &comment)
