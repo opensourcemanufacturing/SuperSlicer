@@ -442,18 +442,37 @@ bool GCodeWriter::will_move_z(double z) const
 
 std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std::string &comment)
 {
-    m_pos.x() = point.x();
-    m_pos.y() = point.y();
-    bool is_extrude = m_tool->extrude(dE) != 0;
-    
-    std::ostringstream gcode;
-    gcode << "G1 X" << XYZF_NUM(point.x())
-        << " Y" << XYZF_NUM(point.y());
-    if(is_extrude)
-        gcode <<    " " << m_extrusion_axis << E_NUM(m_tool->E());
-    COMMENT(comment);
-    gcode << "\n";
-    return gcode.str();
+    if (FLAVOR_IS(gcfopenfl)) {
+        m_pos.x() = point.x();
+        m_pos.y() = point.y();
+        bool is_extrude = m_tool->extrude(dE) != 0;
+        
+        std::ostringstream gcode;
+        gcode << "0x00 XY Move \n" << XYZF_NUM(point.x())
+            << "LaserPoint("
+            << "x=" << XYZF_NUM(point.x())
+            << ", y=" << XYZF_NUM(point.y());
+            << ", dt=" << "666"
+            << ")"
+        if(is_extrude)
+            gcode <<    " " << m_extrusion_axis << E_NUM(m_tool->E());
+        COMMENT(comment);
+        gcode << "\n";
+        return gcode.str();
+    } else {
+        m_pos.x() = point.x();
+        m_pos.y() = point.y();
+        bool is_extrude = m_tool->extrude(dE) != 0;
+        
+        std::ostringstream gcode;
+        gcode << "G1 X" << XYZF_NUM(point.x())
+            << " Y" << XYZF_NUM(point.y());
+        if(is_extrude)
+            gcode <<    " " << m_extrusion_axis << E_NUM(m_tool->E());
+        COMMENT(comment);
+        gcode << "\n";
+        return gcode.str();
+    }
 }
 
 std::string GCodeWriter::extrude_to_xyz(const Vec3d &point, double dE, const std::string &comment)
