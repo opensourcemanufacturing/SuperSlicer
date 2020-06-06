@@ -1281,7 +1281,7 @@ if (print.config().gcode_flavor.value != gcfopenfl) {
     const double       layer_height         = first_object->config().layer_height.value;
     const double       first_layer_height   = first_object->config().first_layer_height.get_abs_value(m_config.nozzle_diameter.empty()?0.:m_config.nozzle_diameter.get_at(0));
     for (const PrintRegion* region : print.regions()) {
-        if (print.config().gcode_flavor.value != gcfopenfl) {
+        if (print.config().gcode_flavor.value != gcfopenfl)
             _write_format(file, "; external perimeters extrusion width = %.2fmm\n", region->flow(frExternalPerimeter, layer_height, false, false, -1., *first_object).width);
             _write_format(file, "; perimeters extrusion width = %.2fmm\n",          region->flow(frPerimeter,         layer_height, false, false, -1., *first_object).width);
             _write_format(file, "; infill extrusion width = %.2fmm\n",              region->flow(frInfill,            layer_height, false, false, -1., *first_object).width);
@@ -1292,7 +1292,6 @@ if (print.config().gcode_flavor.value != gcfopenfl) {
             if (print.config().first_layer_extrusion_width.value > 0)
                 _write_format(file, "; first layer extrusion width = %.2fmm\n",   region->flow(frPerimeter, first_layer_height, false, true, -1., *first_object).width);
                 _write_format(file, "\n");
-        }
     }
     if (this->config().gcode_label_objects) {
         for (PrintObject *print_object : print.objects()) {
