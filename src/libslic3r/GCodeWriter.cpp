@@ -444,12 +444,12 @@ bool GCodeWriter::will_move_z(double z) const
 
 std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std::string &comment)
 {
-    long slapoint (Long fdmpoint)
+    slapoint (Long fdmpoint)
     {
         int laserpoint = std::llround(fdmpoint * 524.288);
         return laserpoint;
     }
-    
+
     if (FLAVOR_IS(gcfopenfl)) {
         m_pos.x() = point.x();
         m_pos.y() = point.y();
