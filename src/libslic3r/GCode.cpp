@@ -1250,31 +1250,32 @@ void GCode::_do_export(Print &print, FILE *file)
     m_enable_extrusion_role_markers = false;
 #endif /* HAS_PRESSURE_EQUALIZER */
 
-    // Write information on the generator.
-    if (print.config().gcode_flavor.value != gcfopenfl)
+if (print.config().gcode_flavor.value != gcfopenfl) {
+
+        // Write information on the generator.
         _write_format(file, "; %s\n\n", Slic3r::header_slic3r_generated().c_str());
 
-#if ENABLE_THUMBNAIL_GENERATOR
-    DoExport::export_thumbnails_to_file(thumbnail_cb, print.full_print_config().option<ConfigOptionPoints>("thumbnails")->values, 
-        [this, file](const char* sz) { this->_write(file, sz); }, 
-        [&print]() { print.throw_if_canceled(); });
-#endif // ENABLE_THUMBNAIL_GENERATOR
+    #if ENABLE_THUMBNAIL_GENERATOR
+        DoExport::export_thumbnails_to_file(thumbnail_cb, print.full_print_config().option<ConfigOptionPoints>("thumbnails")->values, 
+            [this, file](const char* sz) { this->_write(file, sz); }, 
+            [&print]() { print.throw_if_canceled(); });
+    #endif // ENABLE_THUMBNAIL_GENERATOR
 
-    // Write notes (content of the Print Settings tab -> Notes)
-    {
-        std::list<std::string> lines;
-        boost::split(lines, print.config().notes.value, boost::is_any_of("\n"), boost::token_compress_off);
-        for (auto line : lines) {
-            // Remove the trailing '\r' from the '\r\n' sequence.
-            if (! line.empty() && line.back() == '\r')
-                line.pop_back();
-            _write_format(file, "; %s\n", line.c_str());
+        // Write notes (content of the Print Settings tab -> Notes)
+        {
+            std::list<std::string> lines;
+            boost::split(lines, print.config().notes.value, boost::is_any_of("\n"), boost::token_compress_off);
+            for (auto line : lines) {
+                // Remove the trailing '\r' from the '\r\n' sequence.
+                if (! line.empty() && line.back() == '\r')
+                    line.pop_back();
+                _write_format(file, "; %s\n", line.c_str());
+            }
+            if (! lines.empty())
+                _write(file, "\n");
         }
-        if (! lines.empty())
-            _write(file, "\n");
-    }
-    print.throw_if_canceled();
-
+        print.throw_if_canceled();
+}
     // Write some terse information on the slicing parameters.
     const PrintObject *first_object         = print.objects().front();
     const double       layer_height         = first_object->config().layer_height.value;
