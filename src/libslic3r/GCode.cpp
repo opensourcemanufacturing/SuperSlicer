@@ -1289,8 +1289,7 @@ void GCode::_do_export(Print &print, FILE *file)
                 _write_format(file, "; support material extrusion width = %.2fmm\n", support_material_flow(first_object).width);
             if (print.config().first_layer_extrusion_width.value > 0)
                 _write_format(file, "; first layer extrusion width = %.2fmm\n",   region->flow(frPerimeter, first_layer_height, false, true, -1., *first_object).width);
-            if (print.config())
-                _write_format(file, "\n");
+            _write_format(file, "\n");
         }
     }
     if (this->config().gcode_label_objects) {
