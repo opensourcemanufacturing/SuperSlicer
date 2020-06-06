@@ -84,11 +84,11 @@ std::string GCodeWriter::postamble() const
 
 std::string GCodeWriter::set_temperature(unsigned int temperature, bool wait, int tool) const
 {
-    if (wait && (FLAVOR_IS(gcfMakerWare) || FLAVOR_IS(gcfSailfish)))
+    if (wait && (FLAVOR_IS(gcfMakerWare) || FLAVOR_IS(gcfSailfish)) || FLAVOR_IS(gcfopenfl))
         return "";
     
     std::string code, comment;
-    if (wait && FLAVOR_IS_NOT(gcfTeacup) || FLAVOR_IS_NOT(gcfopenfl)) {
+    if (wait && FLAVOR_IS_NOT(gcfTeacup)) {
         code = "M109";
         comment = "set temperature and wait for it to be reached";
     } else {
