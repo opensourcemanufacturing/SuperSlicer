@@ -1251,7 +1251,8 @@ void GCode::_do_export(Print &print, FILE *file)
 #endif /* HAS_PRESSURE_EQUALIZER */
 
     // Write information on the generator.
-    _write_format(file, "; %s\n\n", Slic3r::header_slic3r_generated().c_str());
+    if (print.config().gcode_flavor.value != gcfopenfl)
+        _write_format(file, "; %s\n\n", Slic3r::header_slic3r_generated().c_str());
 
 #if ENABLE_THUMBNAIL_GENERATOR
     DoExport::export_thumbnails_to_file(thumbnail_cb, print.full_print_config().option<ConfigOptionPoints>("thumbnails")->values, 
