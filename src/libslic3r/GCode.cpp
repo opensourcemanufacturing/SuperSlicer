@@ -1956,7 +1956,7 @@ std::string GCode::emit_custom_gcode_per_print_z(
         }
 
         // we should add or not colorprint_change in respect to nozzle_diameter count instead of really used extruders count
-        if (color_change || tool_change || config().gcode_flavor != gcfopenfl)
+        if (color_change || tool_change || print.config().gcode_flavor != gcfopenfl)
         {
 
             // Color Change or Tool Change as Color Change.
@@ -1979,7 +1979,7 @@ std::string GCode::emit_custom_gcode_per_print_z(
         } 
         else
         {
-            if (custom_code == PausePrintCode || config().gcode_flavor != gcfopenfl) // Pause print
+            if (custom_code == PausePrintCode || print.config().gcode_flavor != gcfopenfl) // Pause print
             {
                 // add tag for analyzer
                 gcode += "; " + GCodeAnalyzer::Pause_Print_Tag + "\n";
@@ -2597,7 +2597,7 @@ void GCode::apply_print_config(const PrintConfig &print_config)
 
 void GCode::append_full_config(const Print &print, std::string &str)
 {
-    if (config().gcode_flavor != gcfopenfl)
+    if (print.config().gcode_flavor != gcfopenfl)
     	const DynamicPrintConfig &cfg = print.full_print_config();
         // Sorted list of config keys, which shall not be stored into the G-code. Initializer list.
     	const std::vector<std::string> banned_keys { 
