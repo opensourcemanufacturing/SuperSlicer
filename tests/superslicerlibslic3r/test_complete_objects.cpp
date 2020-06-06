@@ -8,9 +8,9 @@
 #include <libslic3r/libslic3r.h>
 #include <libslic3r/SVG.hpp>
 
-using namespace Slic3r::Test;
-using namespace Slic3r;
-using namespace std::literals;
+// using namespace Slic3r::Test;
+// using namespace Slic3r;
+// using namespace std::literals;
 
 
 // std::unique_ptr<Print> init_print_with_dist(DynamicPrintConfig &config, float distance) {
