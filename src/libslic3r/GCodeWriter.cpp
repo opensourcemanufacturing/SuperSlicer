@@ -455,10 +455,12 @@ std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std:
         gcode << "0x01 LaserPowerLevel 43074\n";
         gcode << "0x00 XY Move 1\n";
         gcode << "LaserPoint(";
-        gcode << "x=" << round(point.x() * 524.88);
-        gcode << ", y=" << round(point.y() * 524.88);
+        //gcode << "x=" << round(point.x() * 524.88);
+        //gcode << ", y=" << round(point.y() * 524.88);
+        gcode << "x=" << XYZF_NUM(point.x());
+        gcode << ", y=" << XYZF_NUM(point.y());
         //gcode << ", dt=" << round(m_tool->E() * 4000);
-        gcode << ", dt=" << m_tool->E();
+        gcode << ", dt=" << E_NUM(m_tool->E());
         gcode << ")\n";
         return gcode.str();
     } else {
