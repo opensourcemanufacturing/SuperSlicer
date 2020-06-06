@@ -1275,7 +1275,7 @@ void GCode::_do_export(Print &print, FILE *file)
     print.throw_if_canceled();
 
     // Write some terse information on the slicing parameters.
-    if (print.config().gcode_flavor.value != gcfopenfl) {
+    if (print.config().gcode_flavor.value != gcfopenfl) 
         const PrintObject *first_object         = print.objects().front();
         const double       layer_height         = first_object->config().layer_height.value;
         const double       first_layer_height   = first_object->config().first_layer_height.get_abs_value(m_config.nozzle_diameter.empty()?0.:m_config.nozzle_diameter.get_at(0));
@@ -1291,7 +1291,6 @@ void GCode::_do_export(Print &print, FILE *file)
                 _write_format(file, "; first layer extrusion width = %.2fmm\n",   region->flow(frPerimeter, first_layer_height, false, true, -1., *first_object).width);
             _write_format(file, "\n");
         }
-    }
     if (this->config().gcode_label_objects) {
         for (PrintObject *print_object : print.objects()) {
             this->m_ordered_objects.push_back(print_object);
