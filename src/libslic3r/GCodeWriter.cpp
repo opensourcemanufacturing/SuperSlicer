@@ -56,6 +56,10 @@ void GCodeWriter::set_mills(std::vector<uint16_t> mill_ids)
 std::string GCodeWriter::preamble()
 {
     std::ostringstream gcode;
+
+    if (FLAVOR_IS(gcfopenfl))
+        return "";
+        
     
     if (FLAVOR_IS_NOT(gcfMakerWare) || FLAVOR_IS_NOT(gcfopenfl))
         gcode << "G21 ; set units to millimeters\n";
