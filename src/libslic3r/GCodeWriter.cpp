@@ -449,11 +449,11 @@ std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std:
         
         std::ostringstream gcode;
         gcode << "0x00 XY Move \n"
-            << "LaserPoint(";
-            << "x=" << XYZF_NUM(point.x());
-            << ", y=" << XYZF_NUM(point.y());
-            << ", dt=" << "666";
-            << ")";
+        gcode << "LaserPoint(";
+        gcode << "x=" << XYZF_NUM(point.x());
+        gcode << ", y=" << XYZF_NUM(point.y());
+        gcode << ", dt=" << "666";
+        gcode << ")";
         if(is_extrude)
             gcode <<    " " << m_extrusion_axis << E_NUM(m_tool->E());
         COMMENT(comment);
