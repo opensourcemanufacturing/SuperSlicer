@@ -3942,7 +3942,7 @@ std::string GCode::_before_extrude(const ExtrusionPath &path, const std::string 
 
     std::string comment;
     if (m_enable_cooling_markers) {
-        if (print.config().gcode_flavor.value != gcfopenfl)
+        if (config().gcode_flavor.value != gcfopenfl)
             if (is_bridge(path.role()))
                 gcode += ";_BRIDGE_FAN_START\n";
             else if (ExtrusionRole::erTopSolidInfill == path.role())
