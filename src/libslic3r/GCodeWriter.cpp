@@ -63,7 +63,7 @@ std::string GCodeWriter::preamble()
 
     if (FLAVOR_IS(gcfRepRap) || FLAVOR_IS(gcfMarlin) || FLAVOR_IS(gcfTeacup) || FLAVOR_IS(gcfRepetier) || FLAVOR_IS(gcfSmoothie)
 		 || FLAVOR_IS(gcfKlipper) || FLAVOR_IS(gcfLerdge) || FLAVOR_IS_NOT(gcfopenfl)) {
-        if (this->config.use_relative_e_distances) {
+        if (this->config.use_relative_e_distances || FLAVOR_IS_NOT(gcfopenfl)) {
             gcode << "M83 ; use relative distances for extrusion\n";
         } else {
             gcode << "M82 ; use absolute distances for extrusion\n";
@@ -99,7 +99,7 @@ std::string GCodeWriter::set_temperature(unsigned int temperature, bool wait, in
     
     std::ostringstream gcode;
     gcode << code << " ";
-    if (FLAVOR_IS(gcfMach3) || FLAVOR_IS(gcfMachinekit)) {
+    if (FLAVOR_IS(gcfMach3) || FLAVOR_IS(gcfMachinekit) || FLAVOR_IS_NOT(gcfopenfl)) {
         gcode << "P";
     } else {
         gcode << "S";
@@ -120,7 +120,7 @@ std::string GCodeWriter::set_temperature(unsigned int temperature, bool wait, in
 
 std::string GCodeWriter::set_bed_temperature(unsigned int temperature, bool wait)
 {
-    if (temperature == m_last_bed_temperature && (! wait || m_last_bed_temperature_reached))
+    if (temperature == m_last_bed_temperature && (! wait || m_last_bed_temperature_reached) || FLAVOR_IS_NOT(gcfopenfl))
         return std::string();
 
     m_last_bed_temperature = temperature;
@@ -143,7 +143,7 @@ std::string GCodeWriter::set_bed_temperature(unsigned int temperature, bool wait
     
     std::ostringstream gcode;
     gcode << code << " ";
-    if (FLAVOR_IS(gcfMach3) || FLAVOR_IS(gcfMachinekit)) {
+    if (FLAVOR_IS(gcfMach3) || FLAVOR_IS(gcfMachinekit) || FLAVOR_IS_NOT(gcfopenfl)) {
         gcode << "P";
     } else {
         gcode << "S";

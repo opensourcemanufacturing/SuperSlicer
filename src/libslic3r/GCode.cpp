@@ -3942,16 +3942,17 @@ std::string GCode::_before_extrude(const ExtrusionPath &path, const std::string 
 
     std::string comment;
     if (m_enable_cooling_markers) {
-        if (is_bridge(path.role()))
-            gcode += ";_BRIDGE_FAN_START\n";
-        else if (ExtrusionRole::erTopSolidInfill == path.role())
-            gcode += ";_TOP_FAN_START\n";
-        else
-            comment = ";_EXTRUDE_SET_SPEED";
-        if (path.role() == erExternalPerimeter)
-            comment += ";_EXTERNAL_PERIMETER";
-        if (path.role() == erThinWall)
-            comment += ";_EXTERNAL_PERIMETER";
+        if (print.config().gcode_flavor.value != gcfopenfl)
+            if (is_bridge(path.role()))
+                gcode += ";_BRIDGE_FAN_START\n";
+            else if (ExtrusionRole::erTopSolidInfill == path.role())
+                gcode += ";_TOP_FAN_START\n";
+            else
+                comment = ";_EXTRUDE_SET_SPEED";
+            if (path.role() == erExternalPerimeter)
+                comment += ";_EXTERNAL_PERIMETER";
+            if (path.role() == erThinWall)
+                comment += ";_EXTERNAL_PERIMETER";
     }
     // F is mm per minute.
     gcode += m_writer.set_speed(F, "", comment);
