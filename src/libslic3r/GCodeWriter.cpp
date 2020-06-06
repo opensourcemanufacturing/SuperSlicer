@@ -440,7 +440,7 @@ bool GCodeWriter::will_move_z(double z) const
     return true;
 }
 
-long slapoint (fdmpoint)
+long slapoint (Long fdmpoint)
 {
     int laserpoint = std::llround(fdmpoint * 524.288);
     return laserpoint;
@@ -456,8 +456,8 @@ std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std:
         std::ostringstream gcode;
         gcode << "0x00 XY Move 1\n";
         gcode << "LaserPoint(";
-        gcode << "x=" << XYZF_NUM(slapoint(point.x()));
-        gcode << ", y=" << XYZF_NUM(slapoint(point.y()));
+        gcode << "x=" << slapoint(XYZF_NUM(point.x()));
+        gcode << ", y=" << slapoint(XYZF_NUM(point.y()));
         gcode << ", dt=" << "666";
         gcode << ")\n";
         return gcode.str();
