@@ -1289,7 +1289,7 @@ void GCode::_do_export(Print &print, FILE *file)
                 _write_format(file, "; support material extrusion width = %.2fmm\n", support_material_flow(first_object).width);
             if (print.config().first_layer_extrusion_width.value > 0)
                 _write_format(file, "; first layer extrusion width = %.2fmm\n",   region->flow(frPerimeter, first_layer_height, false, true, -1., *first_object).width);
-            _write_format(file, "\n");
+                _write_format(file, "\n");
         }
     }
     if (this->config().gcode_label_objects) {
@@ -2597,23 +2597,22 @@ void GCode::apply_print_config(const PrintConfig &print_config)
 
 void GCode::append_full_config(const Print &print, std::string &str)
 {
-    if (config().gcode_flavor.value != gcfopenfl)
-    	const DynamicPrintConfig &cfg = print.full_print_config();
-        // Sorted list of config keys, which shall not be stored into the G-code. Initializer list.
-    	const std::vector<std::string> banned_keys { 
-    		"compatible_printers",
-    		"compatible_prints",
-    		"print_host",
-    		"printhost_apikey",
-    		"printhost_cafile"
-    	};
-        assert(std::is_sorted(banned_keys.begin(), banned_keys.end()));
-    	auto is_banned = [banned_keys](const std::string &key) {
-    		return std::binary_search(banned_keys.begin(), banned_keys.end(), key);
-    	};
-        for (const std::string &key : cfg.keys())
-            if (! is_banned(key) && ! cfg.option(key)->is_nil())
-                str += "; " + key + " = " + cfg.opt_serialize(key) + "\n";
+	const DynamicPrintConfig &cfg = print.full_print_config();
+    // Sorted list of config keys, which shall not be stored into the G-code. Initializer list.
+	const std::vector<std::string> banned_keys { 
+		"compatible_printers",
+		"compatible_prints",
+		"print_host",
+		"printhost_apikey",
+		"printhost_cafile"
+	};
+    assert(std::is_sorted(banned_keys.begin(), banned_keys.end()));
+	auto is_banned = [banned_keys](const std::string &key) {
+		return std::binary_search(banned_keys.begin(), banned_keys.end(), key);
+	};
+    for (const std::string &key : cfg.keys())
+        if (! is_banned(key) && ! cfg.option(key)->is_nil())
+            str += "; " + key + " = " + cfg.opt_serialize(key) + "\n";
 }
 
 void GCode::set_extruders(const std::vector<uint16_t>& extruder_ids)
