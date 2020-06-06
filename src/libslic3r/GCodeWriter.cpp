@@ -316,7 +316,6 @@ std::string GCodeWriter::set_speed(double F, const std::string &comment, const s
         assert(F < 100000.);
         std::ostringstream gcode;
         gcode << "0x04 ZFeedRate " << XYZF_NUM(F);
-        gcode << cooling_marker;
         gcode << "\n";
         return gcode.str();
     } else {
@@ -340,7 +339,6 @@ std::string GCodeWriter::travel_to_xy(const Vec2d &point, const std::string &com
         std::ostringstream gcode;
         gcode << "X" << round(point.x() * 524.88);
         gcode <<   "Y" << round(point.y() * 524.88);
-        COMMENT(comment);
         gcode << "\n";
         return gcode.str();
     } else {
