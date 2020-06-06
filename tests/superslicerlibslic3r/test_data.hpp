@@ -1,14 +1,14 @@
-#ifndef SLIC3R_TEST_DATA_HPP
-#define SLIC3R_TEST_DATA_HPP
-#include <libslic3r/Point.hpp>
-#include <libslic3r/TriangleMesh.hpp>
-#include <libslic3r/Geometry.hpp>
-#include <libslic3r/Model.hpp>
-#include <libslic3r/Print.hpp>
-#include <libslic3r/Config.hpp>
-#include <test_utils.hpp>
+// #ifndef SLIC3R_TEST_DATA_HPP
+// #define SLIC3R_TEST_DATA_HPP
+// #include <libslic3r/Point.hpp>
+// #include <libslic3r/TriangleMesh.hpp>
+// #include <libslic3r/Geometry.hpp>
+// #include <libslic3r/Model.hpp>
+// #include <libslic3r/Print.hpp>
+// #include <libslic3r/Config.hpp>
+// #include <test_utils.hpp>
 
-#include <unordered_map>
+// #include <unordered_map>
 
 // namespace Slic3r { namespace Test {
 
