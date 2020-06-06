@@ -57,10 +57,10 @@ std::string GCodeWriter::preamble()
 {
     std::ostringstream gcode;
     
-    if (FLAVOR_IS_NOT(gcfMakerWare) || FLAVOR_IS_NOT(gcfopenfl)) {
+    if (FLAVOR_IS_NOT(gcfMakerWare) || FLAVOR_IS_NOT(gcfopenfl))
         gcode << "G21 ; set units to millimeters\n";
         gcode << "G90 ; use absolute coordinates\n";
-    }
+
     if (FLAVOR_IS(gcfRepRap) || FLAVOR_IS(gcfMarlin) || FLAVOR_IS(gcfTeacup) || FLAVOR_IS(gcfRepetier) || FLAVOR_IS(gcfSmoothie)
 		 || FLAVOR_IS(gcfKlipper) || FLAVOR_IS(gcfLerdge) || FLAVOR_IS_NOT(gcfopenfl)) {
         if (this->config.use_relative_e_distances) {
@@ -88,10 +88,11 @@ std::string GCodeWriter::set_temperature(unsigned int temperature, bool wait, in
         return "";
     
     std::string code, comment;
-    if (wait && FLAVOR_IS_NOT(gcfTeacup)) {
+    if (wait && FLAVOR_IS_NOT(gcfTeacup) || FLAVOR_IS_NOT(gcfopenfl)) {
         code = "M109";
         comment = "set temperature and wait for it to be reached";
     } else {
+        if (FLAVOR_IS_NOT(gcfopenfl))
         code = "M104";
         comment = "set temperature";
     }
@@ -127,13 +128,15 @@ std::string GCodeWriter::set_bed_temperature(unsigned int temperature, bool wait
 
     std::string code, comment;
     if (wait && FLAVOR_IS_NOT(gcfTeacup)) {
-        if (FLAVOR_IS(gcfMakerWare) || FLAVOR_IS(gcfSailfish)) {
+        if (FLAVOR_IS(gcfMakerWare) || FLAVOR_IS(gcfSailfish) || FLAVOR_IS_NOT(gcfopenfl)) {
             code = "M109";
         } else {
+            if (FLAVOR_IS_NOT(gcfopenfl))
             code = "M190";
         }
         comment = "set bed temperature and wait for it to be reached";
     } else {
+        if (FLAVOR_IS_NOT(gcfopenfl))
         code = "M140";
         comment = "set bed temperature";
     }
@@ -165,9 +168,10 @@ std::string GCodeWriter::set_fan(unsigned int speed, bool dont_save)
             } else if (FLAVOR_IS(gcfMakerWare) || FLAVOR_IS(gcfSailfish)) {
                 gcode << "M127";
             } else {
+                if (FLAVOR_IS_NOT(gcfopenfl))
                 gcode << "M107";
             }
-            if (this->config.gcode_comments) gcode << " ; disable fan";
+            if (this->config.gcode_comments || FLAVOR_IS_NOT(gcfopenfl)) gcode << " ; disable fan";
             gcode << "\n";
         } else {
             if (FLAVOR_IS(gcfMakerWare) || FLAVOR_IS(gcfSailfish)) {
@@ -405,9 +409,8 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
         m_pos.z() = z;
         
         std::ostringstream gcode;
-        gcode << "0x04 ZFeedRate" << XYZF_NUM(z)
+        gcode << "0x04 ZFeedRate " << XYZF_NUM(z)
               <<   " F" << XYZF_NUM(this->config.travel_speed.value * 60.0);
-        COMMENT(comment);
         gcode << "\n";
         return gcode.str();
     } else {
