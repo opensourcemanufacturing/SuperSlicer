@@ -10,7 +10,7 @@
 
 #include <unordered_map>
 
-namespace Slic3r { namespace Test {
+// namespace Slic3r { namespace Test {
 
 // /// Enumeration of test meshes
 // enum class TestMesh {
