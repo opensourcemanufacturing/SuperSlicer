@@ -307,8 +307,7 @@ std::string GCodeWriter::set_speed(double F, const std::string &comment, const s
         assert(F > 0.);
         assert(F < 100000.);
         std::ostringstream gcode;
-        gcode << "0x04 ZFeedRate" << XYZF_NUM(F);
-        COMMENT(comment);
+        gcode << "0x04 ZFeedRate " << XYZF_NUM(F);
         gcode << cooling_marker;
         gcode << "\n";
         return gcode.str();
