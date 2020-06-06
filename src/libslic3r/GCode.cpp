@@ -1285,13 +1285,13 @@ void GCode::_do_export(Print &print, FILE *file)
             _write_format(file, "; infill extrusion width = %.2fmm\n",              region->flow(frInfill,            layer_height, false, false, -1., *first_object).width);
             _write_format(file, "; solid infill extrusion width = %.2fmm\n",        region->flow(frSolidInfill,       layer_height, false, false, -1., *first_object).width);
             _write_format(file, "; top infill extrusion width = %.2fmm\n",          region->flow(frTopSolidInfill,    layer_height, false, false, -1., *first_object).width);
+            if (print.has_support_material())
+                _write_format(file, "; support material extrusion width = %.2fmm\n", support_material_flow(first_object).width);
+            if (print.config().first_layer_extrusion_width.value > 0)
+                _write_format(file, "; first layer extrusion width = %.2fmm\n",   region->flow(frPerimeter, first_layer_height, false, true, -1., *first_object).width);
+            if (print.config())
+                _write_format(file, "\n");
         }
-        if (print.has_support_material() || print.config().gcode_flavor.value != gcfopenfl)
-            _write_format(file, "; support material extrusion width = %.2fmm\n", support_material_flow(first_object).width);
-        if (print.config().first_layer_extrusion_width.value > 0 || print.config().gcode_flavor.value != gcfopenfl)
-            _write_format(file, "; first layer extrusion width = %.2fmm\n",   region->flow(frPerimeter, first_layer_height, false, true, -1., *first_object).width);
-        if (print.config().gcode_flavor.value != gcfopenfl)
-            _write_format(file, "\n");
     }
     if (this->config().gcode_label_objects) {
         for (PrintObject *print_object : print.objects()) {
