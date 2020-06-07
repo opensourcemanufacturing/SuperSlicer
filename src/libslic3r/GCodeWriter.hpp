@@ -115,7 +115,7 @@ private:
     // if positive, it's set, and the next lift wil have this extra lift
     double extra_lift = 0;
 };
-    std::string  m_last_speed;
+    double  m_last_speed;
 
 } /* namespace Slic3r */
 
