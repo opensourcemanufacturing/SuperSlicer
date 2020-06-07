@@ -313,7 +313,7 @@ std::string GCodeWriter::toolchange(unsigned int tool_id)
 
 std::string GCodeWriter::set_speed(double F, const std::string &comment, const std::string &cooling_marker) const
 {
-    std:: ostringstream gcode;
+    std::string;
     m_last_speed = F;
     extrude_to_xy(m_last_speed);
 
@@ -468,7 +468,7 @@ bool GCodeWriter::will_move_z(double z) const
 }
 
 
-std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std::string &comment, std::__cx11::string &passed)
+std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std::string &comment, std::string &passed)
 {
     
 
