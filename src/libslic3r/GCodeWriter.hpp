@@ -104,7 +104,6 @@ private:
     // If set to zero, the limit is not in action.
     unsigned int        m_max_acceleration;
     unsigned int        m_last_fan_speed;
-    double               m_last_speed;
     unsigned int        m_last_bed_temperature;
     bool                m_last_bed_temperature_reached;
     double              m_lifted;
@@ -116,6 +115,7 @@ private:
     // if positive, it's set, and the next lift wil have this extra lift
     double extra_lift = 0;
 };
+double  m_last_speed;
 
 } /* namespace Slic3r */
 
