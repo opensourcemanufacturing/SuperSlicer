@@ -314,10 +314,9 @@ std::string GCodeWriter::set_speed(double F, const std::string &comment, const s
     if (FLAVOR_IS(gcfopenfl)){
         assert(F > 0.);
         assert(F < 100000.);
-        speedValue = gcode << "dt=" << XYZF_NUM(F);
-        // std::ostringstream gcode;
-        //return gcode.str();
-        return "";
+        gcode << "dt=" << XYZF_NUM(F);
+        std::ostringstream gcode;
+        return gcode.str();
     } else {
         assert(F > 0.);
         assert(F < 100000.);
