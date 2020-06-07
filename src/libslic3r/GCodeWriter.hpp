@@ -12,6 +12,7 @@ namespace Slic3r {
 
 class GCodeWriter {
 public:
+    double m_last_speed;
     static std::string PausePrintCode;
     GCodeConfig config;
     bool multiple_extruders;
@@ -104,7 +105,6 @@ private:
     // If set to zero, the limit is not in action.
     unsigned int    m_max_acceleration;
     unsigned int    m_last_fan_speed;
-    double          m_last_speed;
     unsigned int    m_last_bed_temperature;
     bool            m_last_bed_temperature_reached;
     double          m_lifted;
