@@ -108,6 +108,7 @@ private:
     bool                m_last_bed_temperature_reached;
     double              m_lifted;
     Vec3d               m_pos = Vec3d::Zero();
+    int                 m_last_speed = speed;
 
     std::string _travel_to_z(double z, const std::string &comment);
     std::string _retract(double length, double restart_extra, const std::string &comment);
@@ -115,7 +116,7 @@ private:
     // if positive, it's set, and the next lift wil have this extra lift
     double extra_lift = 0;
 };
-    double  m_last_speed;
+    
 
 } /* namespace Slic3r */
 
