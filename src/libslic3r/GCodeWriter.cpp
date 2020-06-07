@@ -342,7 +342,7 @@ std::string GCodeWriter::travel_to_xy(const Vec2d &point, const std::string &com
         gcode << "LaserPoint(";
         gcode << "x=" << round(point.x() * 524.28);
         gcode << ", y=" << round(point.y() * 524.28);
-        gcode << ", dt=" << round(m_tool->E() * 4000);
+        gcode << ", dt=" << round(m_tool->E() * 75);
         gcode << ")\n";
         return gcode.str();
     } else {
@@ -457,9 +457,6 @@ std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std:
         gcode << "LaserPoint(";
         gcode << "x=" << round(point.x() * 524.28);
         gcode << ", y=" << round(point.y() * 524.28);
-        // gcode << "x=" << XYZF_NUM(point.x());
-        // gcode << ", y=" << XYZF_NUM(point.y());
-        //gcode << ", dt=" << round(m_tool->E() * 4000);
         gcode << ", dt=" << round(m_tool->E() * 75);
         gcode << ")\n";
         return gcode.str();
