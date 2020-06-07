@@ -57,6 +57,8 @@ std::string GCodeWriter::preamble()
 {
     std::ostringstream gcode;
 
+    m_last_speed = XYZF_NUM(F);
+
     if (FLAVOR_IS(gcfopenfl))
         return "";
         
