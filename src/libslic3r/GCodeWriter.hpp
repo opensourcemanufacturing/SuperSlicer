@@ -102,13 +102,13 @@ private:
     unsigned int    m_last_acceleration;
     // Limit for setting the acceleration, to respect the machine limits set for the Marlin firmware.
     // If set to zero, the limit is not in action.
-    unsigned int    m_max_acceleration;
-    unsigned int    m_last_fan_speed;
-    std::string     m_last_speed;
-    unsigned int    m_last_bed_temperature;
-    bool            m_last_bed_temperature_reached;
-    double          m_lifted;
-    Vec3d           m_pos = Vec3d::Zero();
+    unsigned int        m_max_acceleration;
+    unsigned int        m_last_fan_speed;
+    std::ostringstream  m_last_speed;
+    unsigned int        m_last_bed_temperature;
+    bool                m_last_bed_temperature_reached;
+    double              m_lifted;
+    Vec3d               m_pos = Vec3d::Zero();
 
     std::string _travel_to_z(double z, const std::string &comment);
     std::string _retract(double length, double restart_extra, const std::string &comment);
