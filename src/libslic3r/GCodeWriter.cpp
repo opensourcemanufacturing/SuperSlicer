@@ -312,8 +312,7 @@ std::string GCodeWriter::toolchange(unsigned int tool_id)
 
 std::string GCodeWriter::set_speed(double F, const std::string &comment, const std::string &cooling_marker) const
 {        
-    std::ostringstream gcode;
-    m_last_speed = XYZF_NUM(F);
+    m_last_speed = speed;
 
     if (FLAVOR_IS(gcfopenfl)){
         assert(F > 0.);
@@ -436,7 +435,7 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
         m_pos.z() = z;
         
         std::ostringstream gcode;
-        //gcode << "0x04 ZFeedRate " << m_last_speed;
+        gcode << "0x04 ZFeedRate " << m_last_speed;
         gcode << "\n";
         return gcode.str();
     } else {
