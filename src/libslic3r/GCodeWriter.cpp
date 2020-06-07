@@ -13,7 +13,7 @@
 #define XYZF_NUM(val) PRECISION(val, 3)
 #define E_NUM(val) PRECISION(val, 5)
 
-std::string GCodeWriter::m_last_speed;
+std::ostringstream m_last_speed;
 
 namespace Slic3r {
 
