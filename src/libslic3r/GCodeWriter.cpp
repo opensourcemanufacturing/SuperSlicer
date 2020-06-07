@@ -56,6 +56,7 @@ void GCodeWriter::set_mills(std::vector<uint16_t> mill_ids)
 std::string GCodeWriter::preamble()
 {
     std::ostringstream gcode;
+    m_last_speed = XYZF_NUM(F);
 
     if (FLAVOR_IS(gcfopenfl))
         return "";
