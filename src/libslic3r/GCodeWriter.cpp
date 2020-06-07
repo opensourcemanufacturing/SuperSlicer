@@ -415,7 +415,7 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
         m_pos.z() = z;
         
         std::ostringstream gcode;
-        gcode << "0x04 ZFeedRate " XYZF_NUM(F);
+        gcode << "0x04 ZFeedRate " << XYZF_NUM(F);
         gcode << "\n";
         return gcode.str();
     } else {
