@@ -313,7 +313,7 @@ std::string GCodeWriter::toolchange(unsigned int tool_id)
 
 std::string GCodeWriter::set_speed(double F, const std::string &comment, const std::string &cooling_marker) const
 {
-    
+    std::ostringstream gcode;
     m_last_speed = XYZF_NUM(F);
 
     if (FLAVOR_IS(gcfopenfl)){
