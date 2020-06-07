@@ -432,7 +432,7 @@ std::string GCodeWriter::travel_to_z(double z, const std::string &comment)
 
 std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
 {
-    m_last_speed = XYZF_NUM(this->config.F);
+    m_last_speed = F;
 
     if(FLAVOR_IS(gcfopenfl)){        
         m_pos.z() = z;
