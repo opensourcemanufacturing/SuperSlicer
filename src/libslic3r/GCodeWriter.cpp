@@ -316,7 +316,6 @@ std::string GCodeWriter::set_speed(double F, const std::string &comment, const s
 {
     std::string;
     m_last_speed = F;
-    extrude_to_xy(m_last_speed);
 
     if (FLAVOR_IS(gcfopenfl)){
         assert(F > 0.);
@@ -435,7 +434,6 @@ std::string GCodeWriter::travel_to_z(double z, const std::string &comment)
 
 std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
 {
-    m_last_speed = XYZF_NUM(F);
 
     if(FLAVOR_IS(gcfopenfl)){        
         m_pos.z() = z;
@@ -469,7 +467,7 @@ bool GCodeWriter::will_move_z(double z) const
 }
 
 
-std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std::string &comment, std::string &passed)
+std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std::string &comment)
 {
     
 
