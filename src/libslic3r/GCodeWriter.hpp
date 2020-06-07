@@ -114,7 +114,7 @@ private:
     std::string _retract(double length, double restart_extra, const std::string &comment);
 
     // if positive, it's set, and the next lift wil have this extra lift
-    double extra_lift = 0;
+    double extra_lift;
 };
     
 
