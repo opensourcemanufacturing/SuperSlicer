@@ -13,8 +13,6 @@
 #define XYZF_NUM(val) PRECISION(val, 3)
 #define E_NUM(val) PRECISION(val, 5)
 
-std::ostringstream m_last_speed;
-
 namespace Slic3r {
 
     std::string GCodeWriter::PausePrintCode = "M601";
