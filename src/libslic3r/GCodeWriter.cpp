@@ -314,8 +314,7 @@ std::string GCodeWriter::toolchange(unsigned int tool_id)
 
 std::string GCodeWriter::set_speed(double F, const std::string &comment, const std::string &cooling_marker) const
 {
-    std::string;
-    m_last_speed = F;
+    m_last_speed = XYXF_NUM(F);
 
     if (FLAVOR_IS(gcfopenfl)){
         assert(F > 0.);
