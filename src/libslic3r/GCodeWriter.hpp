@@ -12,12 +12,12 @@ namespace Slic3r {
 
 class GCodeWriter {
 public:
-    std::ostringstream m_last_speed;
     static std::string PausePrintCode;
     GCodeConfig config;
     bool multiple_extruders;
     
-    GCodeWriter() : 
+    GCodeWriter() :
+        std::ostringstream m_last_speed;
         multiple_extruders(false), m_extrusion_axis("E"), m_tool(nullptr),
         m_single_extruder_multi_material(false),
         m_last_acceleration(0), m_max_acceleration(0), m_last_fan_speed(0), 
