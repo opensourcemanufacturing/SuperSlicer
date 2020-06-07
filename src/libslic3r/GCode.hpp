@@ -29,7 +29,7 @@
 #endif /* HAS_PRESSURE_EQUALIZER */
 
 namespace Slic3r {
-
+m_last_speed;
 // Forward declarations.
 class GCode;
 class GCodePreviewData;
@@ -163,7 +163,6 @@ public:
         m_silent_time_estimator_enabled(false),
         m_last_obj_copy(nullptr, Point(std::numeric_limits<coord_t>::max(), std::numeric_limits<coord_t>::max()))
         {}
-        std::string m_last_speed;
     ~GCode() {}
 
     // throws std::runtime_exception on error,
