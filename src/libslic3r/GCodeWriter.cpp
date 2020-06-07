@@ -342,7 +342,7 @@ std::string GCodeWriter::travel_to_xy(const Vec2d &point, const std::string &com
         gcode << "LaserPoint(";
         gcode << "x=" << round(point.x() * 524.28);
         gcode << ", y=" << round(point.y() * 524.28);
-        gcode << ", dt=" << XYZF_NUM(this->config.travel_speed.value * 60.0);
+        gcode << ", dt=" << XYZF_NUM(F);
         gcode << ")\n";
         return gcode.str();
     } else {
@@ -415,7 +415,7 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
         m_pos.z() = z;
         
         std::ostringstream gcode;
-        gcode << "0x04 ZFeedRate " << XYZF_NUM(this->config.travel_speed.value * 60.0);
+        gcode << "0x04 ZFeedRate " XYZF_NUM(F);
         gcode << "\n";
         return gcode.str();
     } else {
@@ -457,7 +457,7 @@ std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std:
         gcode << "LaserPoint(";
         gcode << "x=" << round(point.x() * 524.28);
         gcode << ", y=" << round(point.y() * 524.28);
-        gcode << ", dt=" << XYZF_NUM(this->config.travel_speed.value * 60.0);
+        gcode << ", dt=" << XYZF_NUM(F);
         gcode << ")\n";
         return gcode.str();
     } else {
