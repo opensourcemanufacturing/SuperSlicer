@@ -16,6 +16,7 @@
 namespace Slic3r {
 
     std::string GCodeWriter::PausePrintCode = "M601";
+    std::string m_last_speed;
 
 void GCodeWriter::apply_print_config(const PrintConfig &print_config)
 {
