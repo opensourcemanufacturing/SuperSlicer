@@ -13,10 +13,11 @@
 #define XYZF_NUM(val) PRECISION(val, 3)
 #define E_NUM(val) PRECISION(val, 5)
 
+std::string GCodeWriter::m_last_speed;
+
 namespace Slic3r {
 
     std::string GCodeWriter::PausePrintCode = "M601";
-    std::string GCodeWriter::m_last_speed;
 
 void GCodeWriter::apply_print_config(const PrintConfig &print_config)
 {
