@@ -29,7 +29,7 @@
 #endif /* HAS_PRESSURE_EQUALIZER */
 
 namespace Slic3r {
-m_last_speed;
+
 // Forward declarations.
 class GCode;
 class GCodePreviewData;
