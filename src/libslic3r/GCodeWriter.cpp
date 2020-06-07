@@ -377,17 +377,35 @@ std::string GCodeWriter::travel_to_xyz(const Vec3d &point, const std::string &co
         
         /*  In all the other cases, we perform an actual XYZ move and cancel
             the lift. */
-        m_lifted = 0;
-        m_pos = point;
-        
-        std::ostringstream gcode;
-        gcode << "G1 X" << XYZF_NUM(point.x())
-              <<   " Y" << XYZF_NUM(point.y())
-              <<   " Z" << XYZF_NUM(point.z())
-              <<   " F" << XYZF_NUM(this->config.travel_speed.value * 60.0);
-        COMMENT(comment);
-        gcode << "\n";
-        return gcode.str();
+        if (FLAVOR_IS(gcfopenfl)) {
+            m_lifted = 0;
+            m_pos = point;
+            
+            std::ostringstream gcode;
+            gcode << "0x01 LaserPowerLevel 0\n";
+            gcode << "0x00 XY Move 1\n";
+            gcode << "LaserPoint(";
+            gcode << "x=" << round(point.x() * 524.28);
+            gcode << ", y=" << round(point.y() * 524.28);
+            gcode << ", dt=" << XYZF_NUM(this->config.travel_speed.value);
+            gcode << ")\n";
+            COMMENT(comment);
+            gcode << "\n";
+            return gcode.str();
+
+            m_lifted = 0;
+            m_pos = point;
+
+        } else {
+            std::ostringstream gcode;
+            gcode << "G1 X" << XYZF_NUM(point.x())
+                  <<   " Y" << XYZF_NUM(point.y())
+                  <<   " Z" << XYZF_NUM(point.z())
+                  <<   " F" << XYZF_NUM(this->config.travel_speed.value * 60.0);
+            COMMENT(comment);
+            gcode << "\n";
+            return gcode.str();
+        }
 }
 
 std::string GCodeWriter::travel_to_z(double z, const std::string &comment)
@@ -415,7 +433,7 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
         m_pos.z() = z;
         
         std::ostringstream gcode;
-        gcode << "0x04 ZFeedRate " << XYZF_NUM(F);
+        gcode << "0x04 ZFeedRate " << XYZF_NUM(this->config.travel_speed.value);
         gcode << "\n";
         return gcode.str();
     } else {
@@ -457,7 +475,7 @@ std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std:
         gcode << "LaserPoint(";
         gcode << "x=" << round(point.x() * 524.28);
         gcode << ", y=" << round(point.y() * 524.28);
-        gcode << ", dt=" << XYZF_NUM(this->config.travel_speed.value);
+        gcode << ", dt=" << XYZF_NUM(F);
         gcode << ")\n";
         return gcode.str();
     } else {
@@ -478,20 +496,37 @@ std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std:
 
 std::string GCodeWriter::extrude_to_xyz(const Vec3d &point, double dE, const std::string &comment)
 {
-        m_pos.x() = point.x();
-        m_pos.y() = point.y();
-        m_lifted = 0;
-        bool is_extrude = m_tool->extrude(dE) != 0;
-        
-        std::ostringstream gcode;
-        gcode << "G1 X" << XYZF_NUM(point.x())
-            << " Y" << XYZF_NUM(point.y())
-            << " Z" << XYZF_NUM(point.z() + m_pos.z());
-        if (is_extrude)
-                gcode <<    " " << m_extrusion_axis << E_NUM(m_tool->E());
-        COMMENT(comment);
-        gcode << "\n";
-        return gcode.str();
+        if (FLAVOR_IS(gcfopenfl)) {
+            m_pos.x() = point.x();
+            m_pos.y() = point.y();
+            m_lifted = 0;
+            bool is_extrude = m_tool->extrude(dE) != 0;
+            
+            std::ostringstream gcode;
+            gcode << "XYZ TEST - 0x01 LaserPowerLevel 43074\n";
+            gcode << "0x00 XY Move 1\n";
+            gcode << "XYZ TEST - LaserPoint(";
+            gcode << "x=" << round(point.x() * 524.28);
+            gcode << ", y=" << round(point.y() * 524.28);
+            gcode << ", dt=" << XYZF_NUM(F);
+            gcode << ")\n";
+            return gcode.str();
+        } else {
+            m_pos.x() = point.x();
+            m_pos.y() = point.y();
+            m_lifted = 0;
+            bool is_extrude = m_tool->extrude(dE) != 0;
+            
+            std::ostringstream gcode;
+            gcode << "G1 X" << XYZF_NUM(point.x())
+                << " Y" << XYZF_NUM(point.y())
+                << " Z" << XYZF_NUM(point.z() + m_pos.z());
+            if (is_extrude)
+                    gcode <<    " " << m_extrusion_axis << E_NUM(m_tool->E());
+            COMMENT(comment);
+            gcode << "\n";
+            return gcode.str();
+        }
 }
 
 std::string GCodeWriter::retract(bool before_wipe)
