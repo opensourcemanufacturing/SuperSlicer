@@ -214,10 +214,10 @@ std::string GCodeWriter::set_acceleration(unsigned int acceleration)
         if (this->config.gcode_comments) gcode << " ; adjust acceleration";
         gcode << "\n";
         // M202: Set max travel acceleration
-        gcode << "M202 X" << acceleration << " Y" << acceleration;
-    if (FLAVOR_IS(gcfopenfl))
+    }    gcode << "M202 X" << acceleration << " Y" << acceleration;
+    else if (FLAVOR_IS(gcfopenfl))
         return "";
-    } else {
+    else {
         // M204: Set default acceleration
         gcode << "M204 S" << acceleration;
     }
