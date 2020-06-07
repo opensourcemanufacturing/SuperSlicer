@@ -468,7 +468,7 @@ bool GCodeWriter::will_move_z(double z) const
 }
 
 
-std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std::string &comment)
+std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std::string &comment, &passed)
 {
     
 
