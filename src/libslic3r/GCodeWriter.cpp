@@ -439,7 +439,7 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
         m_pos.z() = z;
         
         std::ostringstream gcode;
-        gcode << "0x04 ZFeedRate " << m_last_speed;
+        //gcode << "0x04 ZFeedRate " << m_last_speed;
         gcode << "\n";
         return gcode.str();
     } else {
