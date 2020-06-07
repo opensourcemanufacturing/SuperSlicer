@@ -17,7 +17,6 @@ public:
     bool multiple_extruders;
     
     GCodeWriter() :
-    std::ostringstream m_last_speed;
         multiple_extruders(false), m_extrusion_axis("E"), m_tool(nullptr),
         m_single_extruder_multi_material(false),
         m_last_acceleration(0), m_max_acceleration(0), m_last_fan_speed(0), 
@@ -105,6 +104,7 @@ private:
     // If set to zero, the limit is not in action.
     unsigned int    m_max_acceleration;
     unsigned int    m_last_fan_speed;
+    unsigned int    m_last_speed;
     unsigned int    m_last_bed_temperature;
     bool            m_last_bed_temperature_reached;
     double          m_lifted;
