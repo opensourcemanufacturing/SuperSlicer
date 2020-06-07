@@ -55,8 +55,6 @@ void GCodeWriter::set_mills(std::vector<uint16_t> mill_ids)
 
 std::string GCodeWriter::preamble()
 {
-    std::ostringstream gcode;
-    m_last_speed = gcode << XYZF_NUM(F);
 
     if (FLAVOR_IS(gcfopenfl))
         return "";
@@ -315,13 +313,12 @@ std::string GCodeWriter::toolchange(unsigned int tool_id)
 std::string GCodeWriter::set_speed(double F, const std::string &comment, const std::string &cooling_marker) const
 {        
     std::ostringstream gcode;
-
-    m_last_speed = gcode<< XYZF_NUM(F);
+    m_last_speed = XYZF_NUM(F);
 
     if (FLAVOR_IS(gcfopenfl)){
         assert(F > 0.);
         assert(F < 100000.);
-        gcode << "dt=" << XYZF_NUM(F) <<"\n";
+        gcode << "dt=" << m_last_speed <<"\n";
         return gcode.str();
     } else {
         assert(F > 0.);
@@ -481,7 +478,7 @@ std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std:
         gcode << "LaserPoint(";
         gcode << "x=" << round(point.x() * 524.28);
         gcode << ", y=" << round(point.y() * 524.28);
-        //gcode << ", dt=" << m_last_speed;
+        gcode << ", dt=" << m_last_speed;
         gcode << ")\n";
         return gcode.str();
     } else {
