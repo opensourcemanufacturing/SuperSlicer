@@ -460,7 +460,7 @@ std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std:
         // gcode << "x=" << XYZF_NUM(point.x());
         // gcode << ", y=" << XYZF_NUM(point.y());
         //gcode << ", dt=" << round(m_tool->E() * 4000);
-        gcode << ", dt=" << (m_tool->E() * 75);
+        gcode << ", dt=" << round(m_tool->E() * 75);
         gcode << ")\n";
         return gcode.str();
     } else {
