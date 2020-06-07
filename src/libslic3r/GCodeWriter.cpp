@@ -315,7 +315,7 @@ std::string GCodeWriter::set_speed(double F, const std::string &comment, const s
         assert(F > 0.);
         assert(F < 100000.);
         std::ostringstream gcode;
-        gcode << "dt=" << XYZF_NUM(F);
+        gcode << "dt=" << XYZF_NUM(F) <<"\n";
         return gcode.str();
     } else {
         assert(F > 0.);
