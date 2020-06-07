@@ -311,14 +311,7 @@ std::string GCodeWriter::toolchange(unsigned int tool_id)
 
 std::string GCodeWriter::set_speed(double F, const std::string &comment, const std::string &cooling_marker) const
 {
-    if (FLAVOR_IS(gcfopenfl)){
-        assert(F > 0.);
-        assert(F < 100000.);
-        std::ostringstream gcode;
-        gcode << "0x04 ZFeedRate " << XYZF_NUM(F);
-        gcode << "\n";
-        return gcode.str();
-    } else {
+    if (FLAVOR_IS_NOT(gcfopenfl)){
         assert(F > 0.);
         assert(F < 100000.);
         std::ostringstream gcode;
