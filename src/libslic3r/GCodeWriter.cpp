@@ -311,7 +311,15 @@ std::string GCodeWriter::toolchange(unsigned int tool_id)
 
 std::string GCodeWriter::set_speed(double F, const std::string &comment, const std::string &cooling_marker) const
 {
-    if (FLAVOR_IS_NOT(gcfopenfl)){
+    if (FLAVOR_IS(gcfopenfl)){
+        // assert(F > 0.);
+        // assert(F < 100000.);
+        // std::ostringstream gcode;
+        // gcode << "0x04 ZFeedRate " << XYZF_NUM(F);
+        // gcode << "\n";
+        // return gcode.str();
+        return "";
+    } else {
         assert(F > 0.);
         assert(F < 100000.);
         std::ostringstream gcode;
@@ -498,7 +506,7 @@ std::string GCodeWriter::extrude_to_xyz(const Vec3d &point, double dE, const std
             std::ostringstream gcode;
             gcode << "XYZ TEST - 0x01 LaserPowerLevel 43074\n";
             gcode << "0x00 XY Move 1\n";
-            gcode << "XYZ TEST - LaserPoint(";
+            gcode << "XYZ TEST- LaserPoint(";
             gcode << "x=" << round(point.x() * 524.28);
             gcode << ", y=" << round(point.y() * 524.28);
             gcode << ", dt=" << XYZF_NUM(F);
