@@ -34,6 +34,8 @@ namespace Slic3r {
 class GCode;
 class GCodePreviewData;
 
+std::string m_last_speed;
+
 class AvoidCrossingPerimeters {
 public:
     
@@ -245,7 +247,6 @@ private:
     std::string     change_layer(coordf_t print_z);
     std::string     visitor_gcode;
     std::string     visitor_comment;
-    std::string     m_last_speed;
     double          visitor_speed;
     std::unique_ptr<EdgeGrid::Grid> *visitor_lower_layer_edge_grid;
     virtual void use(const ExtrusionPath &path) override { visitor_gcode += extrude_path(path, visitor_comment, visitor_speed); };
