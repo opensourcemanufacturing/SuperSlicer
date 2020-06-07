@@ -313,7 +313,9 @@ std::string GCodeWriter::toolchange(unsigned int tool_id)
 
 std::string GCodeWriter::set_speed(double F, const std::string &comment, const std::string &cooling_marker) const
 {
+    std:: ostringstream gcode;
     m_last_speed = F;
+    extrude_to_xy(m_last_speed);
 
     if (FLAVOR_IS(gcfopenfl)){
         assert(F > 0.);
@@ -480,7 +482,7 @@ std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std:
         gcode << "LaserPoint(";
         gcode << "x=" << round(point.x() * 524.28);
         gcode << ", y=" << round(point.y() * 524.28);
-        gcode << ", dt=" << set_speed().m_last_speed;
+        gcode << ", dt=" << m_last_speed;
         gcode << ")\n";
         return gcode.str();
     } else {
