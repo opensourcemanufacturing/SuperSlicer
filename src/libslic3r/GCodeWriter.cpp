@@ -481,7 +481,7 @@ std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std:
         gcode << "LaserPoint(";
         gcode << "x=" << round(point.x() * 524.28);
         gcode << ", y=" << round(point.y() * 524.28);
-        gcode << ", dt=" << m_last_speed;
+        //gcode << ", dt=" << m_last_speed;
         gcode << ")\n";
         return gcode.str();
     } else {
