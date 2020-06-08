@@ -361,7 +361,6 @@ std::string GCodeWriter::travel_to_xy(const Vec2d &point, const std::string &com
         gcode << "x=" << round(point.x() * 524.28);
         gcode << ", y=" << round(point.y() * 524.28);
         gcode << ", dt=" << round(m_last_speed * (m_tool->E()));
-        gcode << ", dt=0";
         gcode << ")\n";
         return gcode.str();
     } else {
@@ -408,7 +407,7 @@ std::string GCodeWriter::travel_to_xyz(const Vec3d &point, const std::string &co
         gcode << "x=" << round(point.x() * 524.28);
         gcode << ", y=" << round(point.y() * 524.28);
         gcode << ", dt=" << round(m_last_speed * (m_tool->E()));
-        gcode << ", dt=0) \n";
+        gcode << ")\n";
         COMMENT(comment);
         gcode << "\n";
         return gcode.str();
