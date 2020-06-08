@@ -335,6 +335,8 @@ std::string GCodeWriter::set_speed(double F, const std::string &comment, const s
 
 std::string GCodeWriter::travel_to_xy(const Vec2d &point, const std::string &comment)
 {
+    m_last_speed = F/60;
+
     if (FLAVOR_IS(gcfopenfl)){
         m_pos.x() = point.x();
         m_pos.y() = point.y();
@@ -368,47 +370,50 @@ std::string GCodeWriter::travel_to_xyz(const Vec3d &point, const std::string &co
         don't perform the Z move but we only move in the XY plane and
         adjust the nominal Z by reducing the lift amount that will be 
         used for unlift. */
-        if (!this->will_move_z(point.z())) {
-            double nominal_z = m_pos.z() - m_lifted;
-            m_lifted -= (point.z() - nominal_z);
-            // In case that retract_lift == layer_height we could end up with almost zero in_m_lifted
-            // and a retract could be skipped (https://github.com/prusa3d/PrusaSlicer/issues/2154
-            if (std::abs(m_lifted) < EPSILON)
-                m_lifted = 0.;
-            return this->travel_to_xy(to_2d(point));
-        }
+
+    m_last_speed = F/60;
+
+    if (!this->will_move_z(point.z())) {
+        double nominal_z = m_pos.z() - m_lifted;
+        m_lifted -= (point.z() - nominal_z);
+        // In case that retract_lift == layer_height we could end up with almost zero in_m_lifted
+        // and a retract could be skipped (https://github.com/prusa3d/PrusaSlicer/issues/2154
+        if (std::abs(m_lifted) < EPSILON)
+            m_lifted = 0.;
+        return this->travel_to_xy(to_2d(point));
+    }
+    
+    /*  In all the other cases, we perform an actual XYZ move and cancel
+        the lift. */
+    if (FLAVOR_IS(gcfopenfl)) {
+        m_lifted = 0;
+        m_pos = point;
         
-        /*  In all the other cases, we perform an actual XYZ move and cancel
-            the lift. */
-        if (FLAVOR_IS(gcfopenfl)) {
-            m_lifted = 0;
-            m_pos = point;
-            
-            std::ostringstream gcode;
-            gcode << "0x01 LaserPowerLevel 0\n";
-            gcode << "0x00 XY Move 1\n";
-            gcode << "LaserPoint(";
-            gcode << "x=" << round(point.x() * 524.28);
-            gcode << ", y=" << round(point.y() * 524.28);
-            gcode << ", dt=" << XYZF_NUM(this->config.travel_speed.value);
-            gcode << ")\n";
-            COMMENT(comment);
-            gcode << "\n";
-            return gcode.str();
+        std::ostringstream gcode;
+        gcode << "0x01 LaserPowerLevel 0\n";
+        gcode << "0x00 XY Move 1\n";
+        gcode << "LaserPoint(";
+        gcode << "x=" << round(point.x() * 524.28);
+        gcode << ", y=" << round(point.y() * 524.28);
+        gcode << ", dt=" << XYZF_NUM(this->config.travel_speed.value);
+        gcode << ")\n";
+        COMMENT(comment);
+        gcode << "\n";
+        return gcode.str();
 
-            m_lifted = 0;
-            m_pos = point;
+        m_lifted = 0;
+        m_pos = point;
 
-        } else {
-            std::ostringstream gcode;
-            gcode << "G1 X" << XYZF_NUM(point.x())
-                  <<   " Y" << XYZF_NUM(point.y())
-                  <<   " Z" << XYZF_NUM(point.z())
-                  <<   " F" << XYZF_NUM(this->config.travel_speed.value * 60.0);
-            COMMENT(comment);
-            gcode << "\n";
-            return gcode.str();
-        }
+    } else {
+        std::ostringstream gcode;
+        gcode << "G1 X" << XYZF_NUM(point.x())
+              <<   " Y" << XYZF_NUM(point.y())
+              <<   " Z" << XYZF_NUM(point.z())
+              <<   " F" << XYZF_NUM(this->config.travel_speed.value * 60.0);
+        COMMENT(comment);
+        gcode << "\n";
+        return gcode.str();
+    }
 }
 
 std::string GCodeWriter::travel_to_z(double z, const std::string &comment)
@@ -416,6 +421,9 @@ std::string GCodeWriter::travel_to_z(double z, const std::string &comment)
     /*  If target Z is lower than current Z but higher than nominal Z
         we don't perform the move but we only adjust the nominal Z by
         reducing the lift amount that will be used for unlift. */
+    
+    m_last_speed = F/60;
+
     if (!this->will_move_z(z)) {
         double nominal_z = m_pos.z() - m_lifted;
         m_lifted -= (z - nominal_z);
@@ -432,6 +440,8 @@ std::string GCodeWriter::travel_to_z(double z, const std::string &comment)
 
 std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
 {
+
+    m_last_speed = F/60;
 
     if(FLAVOR_IS(gcfopenfl)){        
         m_pos.z() = z;
@@ -456,6 +466,9 @@ bool GCodeWriter::will_move_z(double z) const
 {
     /* If target Z is lower than current Z but higher than nominal Z
         we don't perform an actual Z move. */
+    
+    m_last_speed = F/60;
+
     if (m_lifted > 0) {
         double nominal_z = m_pos.z() - m_lifted;
         if (z >= nominal_z && z <= m_pos.z())
@@ -467,7 +480,7 @@ bool GCodeWriter::will_move_z(double z) const
 
 std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std::string &comment)
 {
-    
+    m_last_speed = F/60;
 
     if (FLAVOR_IS(gcfopenfl)) {
         m_pos.x() = point.x();
@@ -500,6 +513,8 @@ std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std:
 
 std::string GCodeWriter::extrude_to_xyz(const Vec3d &point, double dE, const std::string &comment)
 {
+        m_last_speed = F/60;
+        
         if (FLAVOR_IS(gcfopenfl)) {
             m_pos.x() = point.x();
             m_pos.y() = point.y();
