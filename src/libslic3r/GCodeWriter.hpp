@@ -111,7 +111,7 @@ private:
     Vec3d                   m_pos = Vec3d::Zero();
     mutable double          m_last_speed;
     mutable unsigned int    laser_power;
-    float m_layer_height =  PrintObjectConfig::layer_height;
+    ConfigOptionFloat m_layer_height =  PrintObjectConfig::layer_height;
 
 
     // the number of laser ticks per second - this must be 60,000.
