@@ -1486,12 +1486,12 @@ std::pair<PrintBase::PrintValidationError, std::string> Print::validate() const
                 // if we don't have raft layers, any nozzle diameter is potentially used in first layer
                 first_layer_min_nozzle_diameter = min_nozzle_diameter;
             }
-            if (first_layer_height > first_layer_min_nozzle_diameter)
+            if (first_layer_height > first_layer_min_nozzle_diameter || config().gcode_flavor.value != gcfopenfl)
                 return { PrintBase::PrintValidationError::pveWrongSettings,L("First layer height can't be greater than nozzle diameter") };
             
             // validate layer_height
             double layer_height = object->config().layer_height.value;
-            if (layer_height > min_nozzle_diameter)
+            if (layer_height > min_nozzle_diameter || config().gcode_flavor.value != gcfopenfl)
                 return { PrintBase::PrintValidationError::pveWrongSettings,L("Layer height can't be greater than nozzle diameter") };
 
             // Validate extrusion widths.
