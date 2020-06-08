@@ -7,6 +7,7 @@
 #include "Point.hpp"
 #include "PrintConfig.hpp"
 #include "GCode/CoolingBuffer.hpp"
+#include "Print.cpp"
 
 namespace Slic3r {
 
