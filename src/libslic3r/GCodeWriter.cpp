@@ -360,6 +360,7 @@ std::string GCodeWriter::travel_to_xy(const Vec2d &point, const std::string &com
         gcode << "  LaserPoint(";
         gcode << "x=" << round(point.x() * 524.28);
         gcode << ", y=" << round(point.y() * 524.28);
+        gcode << ", dt=" << round(m_last_speed * (m_tool->E()));
         gcode << ", dt=0";
         gcode << ")\n";
         return gcode.str();
@@ -403,9 +404,10 @@ std::string GCodeWriter::travel_to_xyz(const Vec3d &point, const std::string &co
         std::ostringstream gcode;
         gcode << "0x01 LaserPowerLevel 0\n";
         gcode << "0x00 XY Move 1\n";
-        gcode << "LaserPoint(";
+        gcode << "  LaserPoint(";
         gcode << "x=" << round(point.x() * 524.28);
         gcode << ", y=" << round(point.y() * 524.28);
+        gcode << ", dt=" << round(m_last_speed * (m_tool->E()));
         gcode << ", dt=0) \n";
         COMMENT(comment);
         gcode << "\n";
@@ -493,7 +495,7 @@ std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std:
         std::ostringstream gcode;
         gcode << "0x01 LaserPowerLevel 43074\n";
         gcode << "0x00 XY Move 1\n";
-        gcode << "LaserPoint(";
+        gcode << "  LaserPoint(";
         gcode << "x=" << round(point.x() * 524.28);
         gcode << ", y=" << round(point.y() * 524.28);
         gcode << ", dt=" << round(m_last_speed * (m_tool->E()));
@@ -525,12 +527,12 @@ std::string GCodeWriter::extrude_to_xyz(const Vec3d &point, double dE, const std
             bool is_extrude = m_tool->extrude(dE) != 0;
             
             std::ostringstream gcode;
-            gcode << "XYZ TEST - 0x01 LaserPowerLevel 43074\n";
+            gcode << "XYZ TEST - 0x01 LaserPowerLevel 0\n";
             gcode << "0x00 XY Move 1\n";
-            gcode << "XYZ TEST- LaserPoint(";
+            gcode << "  LaserPoint(";
             gcode << "x=" << round(point.x() * 524.28);
             gcode << ", y=" << round(point.y() * 524.28);
-            gcode << ", dt=" << m_last_speed;
+            gcode << ", dt=" << round(m_last_speed * (m_tool->E()));
             gcode << ")\n";
             return gcode.str();
         } else {
