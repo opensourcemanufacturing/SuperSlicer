@@ -314,7 +314,7 @@ std::string GCodeWriter::toolchange(unsigned int tool_id)
 std::string GCodeWriter::set_speed(double F, const std::string &comment, const std::string &cooling_marker) const
 {        
     std::ostringstream gcode;
-    m_last_speed = F/60;
+    m_last_speed = (F*1.25);
 
     if (FLAVOR_IS(gcfopenfl)){
         assert(F > 0.);
@@ -346,7 +346,7 @@ std::string GCodeWriter::travel_to_xy(const Vec2d &point, const std::string &com
         gcode << "LaserPoint(";
         gcode << "x=" << round(point.x() * 524.28);
         gcode << ", y=" << round(point.y() * 524.28);
-        gcode << ", dt=" << m_last_speed;
+        gcode << ", dt=" << m_last_speed/XYZF_NUM(E);
         gcode << ")\n";
         return gcode.str();
     } else {
