@@ -452,7 +452,7 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
         gcode << "0x04 ZFeedRate " << XYZF_NUM(this->config.travel_speed.value);
         gcode << "\n";
         gcode << "0x03 ZMove ";
-        gcode << z_layer_height_openfl;
+        gcode << "";
         gcode << "\n";
         return gcode.str();
     } else {
