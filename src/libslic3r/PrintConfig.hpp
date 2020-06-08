@@ -30,7 +30,6 @@
 
 #include "libslic3r.h"
 #include "Config.hpp"
-#include "GCode.hpp"
 
 // #define HAS_PRESSURE_EQUALIZER
 
