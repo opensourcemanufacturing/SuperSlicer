@@ -30,7 +30,6 @@
 
 namespace Slic3r {
 
-z_layer_height_openfl = layer_height
 
 // Forward declarations.
 class GCode;
