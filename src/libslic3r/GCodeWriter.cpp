@@ -124,9 +124,6 @@ std::string GCodeWriter::set_temperature(unsigned int temperature, bool wait, in
     if (FLAVOR_IS(gcfTeacup) && wait)
         gcode << "M116 ; wait for temperature to be reached\n";
     
-        
-    }
-    
     return gcode.str();
 }
 
