@@ -88,9 +88,14 @@ std::string GCodeWriter::postamble() const
 
 std::string GCodeWriter::set_temperature(unsigned int temperature, bool wait, int tool) const
 {
-    if (wait && (FLAVOR_IS(gcfMakerWare) || FLAVOR_IS(gcfSailfish)) || FLAVOR_IS(gcfopenfl))
+    if (wait && (FLAVOR_IS(gcfMakerWare) || FLAVOR_IS(gcfSailfish)))
         return "";
-    
+
+    std::ostringstream gcode;
+    if (FLAVOR_IS(gcfopenfl)) {
+        gcode << "0x01 LaserPowerLevel ";
+    }
+
     std::string code, comment;
     if (wait && FLAVOR_IS_NOT(gcfTeacup)) {
         code = "M109";
@@ -444,7 +449,7 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
         m_pos.z() = z;
         
         std::ostringstream gcode;
-        gcode << "0x04 ZFeedRate " << m_last_speed;
+        gcode << "0x04 ZFeedRate " << XYZF_NUM(this->config.travel_speed.value * 60.0);
         gcode << "\n";
         return gcode.str();
     } else {
