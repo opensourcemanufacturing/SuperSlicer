@@ -472,6 +472,8 @@ bool GCodeWriter::will_move_z(double z) const
 
 std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std::string &comment)
 {
+    if m_last_speed == 1.11936e-36
+        m_last_speed = F
 
     if (FLAVOR_IS(gcfopenfl)) {
         m_pos.x() = point.x();
