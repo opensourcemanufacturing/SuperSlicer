@@ -311,7 +311,7 @@ std::string GCodeWriter::toolchange(unsigned int tool_id)
     return gcode.str();
 }
 
-std::string GCodeWriter::set_speed(double F, const std::string &comment, const std::string &cooling_marker) const
+std::string GCodeWriter::set_speed(double F, const std::string &comment, const std::string &cooling_marker)
 {        
     std::ostringstream gcode;
     m_last_speed = F/60;
