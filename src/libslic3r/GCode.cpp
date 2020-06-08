@@ -1292,6 +1292,7 @@ if (print.config().gcode_flavor.value != gcfopenfl) {
             if (print.config().first_layer_extrusion_width.value > 0)
                 _write_format(file, "; first layer extrusion width = %.2fmm\n",   region->flow(frPerimeter, first_layer_height, false, true, -1., *first_object).width);
                 _write_format(file, "\n");
+    z_layer_height_openfl = layer_height
         }
     }
     if (this->config().gcode_label_objects) {
