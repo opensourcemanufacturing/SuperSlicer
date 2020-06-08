@@ -335,7 +335,6 @@ std::string GCodeWriter::set_speed(double F, const std::string &comment, const s
 
 std::string GCodeWriter::travel_to_xy(const Vec2d &point, const std::string &comment)
 {
-    m_last_speed = F/60;
 
     if (FLAVOR_IS(gcfopenfl)){
         m_pos.x() = point.x();
@@ -370,8 +369,6 @@ std::string GCodeWriter::travel_to_xyz(const Vec3d &point, const std::string &co
         don't perform the Z move but we only move in the XY plane and
         adjust the nominal Z by reducing the lift amount that will be 
         used for unlift. */
-
-    m_last_speed = F/60;
 
     if (!this->will_move_z(point.z())) {
         double nominal_z = m_pos.z() - m_lifted;
@@ -421,8 +418,6 @@ std::string GCodeWriter::travel_to_z(double z, const std::string &comment)
     /*  If target Z is lower than current Z but higher than nominal Z
         we don't perform the move but we only adjust the nominal Z by
         reducing the lift amount that will be used for unlift. */
-    
-    m_last_speed = F/60;
 
     if (!this->will_move_z(z)) {
         double nominal_z = m_pos.z() - m_lifted;
@@ -441,7 +436,6 @@ std::string GCodeWriter::travel_to_z(double z, const std::string &comment)
 std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
 {
 
-    m_last_speed = F/60;
 
     if(FLAVOR_IS(gcfopenfl)){        
         m_pos.z() = z;
@@ -466,8 +460,6 @@ bool GCodeWriter::will_move_z(double z) const
 {
     /* If target Z is lower than current Z but higher than nominal Z
         we don't perform an actual Z move. */
-    
-    m_last_speed = F/60;
 
     if (m_lifted > 0) {
         double nominal_z = m_pos.z() - m_lifted;
@@ -480,7 +472,6 @@ bool GCodeWriter::will_move_z(double z) const
 
 std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std::string &comment)
 {
-    m_last_speed = F/60;
 
     if (FLAVOR_IS(gcfopenfl)) {
         m_pos.x() = point.x();
@@ -513,8 +504,7 @@ std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std:
 
 std::string GCodeWriter::extrude_to_xyz(const Vec3d &point, double dE, const std::string &comment)
 {
-        m_last_speed = F/60;
-        
+
         if (FLAVOR_IS(gcfopenfl)) {
             m_pos.x() = point.x();
             m_pos.y() = point.y();
