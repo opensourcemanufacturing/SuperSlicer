@@ -403,8 +403,6 @@ std::string GCodeWriter::travel_to_xyz(const Vec3d &point, const std::string &co
         gcode << ", y=" << round(point.y() * 524.28);
         gcode << ", dt=" << round(m_last_speed * (m_tool->E()));
         gcode << ")\n";
-        COMMENT(comment);
-        gcode << "\n";
         return gcode.str();
 
         m_lifted = 0;
@@ -450,7 +448,10 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
         m_pos.z() = z;
         
         std::ostringstream gcode;
-        gcode << "0x04 ZFeedRate " << XYZF_NUM(this->config.travel_speed.value * 60.0);
+        gcode << "0x04 ZFeedRate " << XYZF_NUM(this->config.travel_speed.value);
+        gcode << "\n";
+        gcode << "0x03 ZMove "
+        gcode << XYZF_NUM(z);
         gcode << "\n";
         return gcode.str();
     } else {
