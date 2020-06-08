@@ -113,9 +113,9 @@ private:
     std::string _retract(double length, double restart_extra, const std::string &comment);
 
     // if positive, it's set, and the next lift wil have this extra lift
-    mutable unsigned int extra_lift = 0;
+    unsigned int extra_lift = 0;
 };
-    double  m_last_speed;
+    mutable double  m_last_speed;
 
 
 } /* namespace Slic3r */
