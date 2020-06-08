@@ -89,12 +89,7 @@ std::string GCodeWriter::postamble() const
 std::string GCodeWriter::set_temperature(unsigned int temperature, bool wait, int tool) const
 {
     if (wait && (FLAVOR_IS(gcfMakerWare) || FLAVOR_IS(gcfSailfish)))
-        return "";
-
-    std::ostringstream gcode;
-    if (FLAVOR_IS(gcfopenfl)) {
-        gcode << "0x01 LaserPowerLevel ";
-    }
+        return "";    
 
     std::string code, comment;
     if (wait && FLAVOR_IS_NOT(gcfTeacup)) {
@@ -112,6 +107,9 @@ std::string GCodeWriter::set_temperature(unsigned int temperature, bool wait, in
         gcode << "P";
     } else {
         gcode << "S";
+    }
+    if (FLAVOR_IS(gcfopenfl)) {
+        gcode << "0x01 LaserPowerLevel ";
     }
     gcode << temperature;
     if (tool != -1 && 
