@@ -121,16 +121,15 @@ std::string GCodeWriter::set_temperature(unsigned int temperature, bool wait, in
         if (FLAVOR_IS(gcfTeacup) && wait)
             gcode << "M116 ; wait for temperature to be reached\n";
 
-        return gcode.str();
     }
     std::ostringstream gcode;
     if (FLAVOR_IS(gcfopenfl)) {
         gcode << "0x01 LaserPowerLevel ";
         gcode << temperature;
-        return gcode.str();
+        
     }
     
-    
+    return gcode.str();
 }
 
 std::string GCodeWriter::set_bed_temperature(unsigned int temperature, bool wait)
