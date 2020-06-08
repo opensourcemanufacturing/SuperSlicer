@@ -91,36 +91,41 @@ std::string GCodeWriter::set_temperature(unsigned int temperature, bool wait, in
     if (wait && (FLAVOR_IS(gcfMakerWare) || FLAVOR_IS(gcfSailfish)))
         return "";    
 
-    std::string code, comment;
-    if (wait && FLAVOR_IS_NOT(gcfTeacup)) {
-        code = "M109";
-        comment = "set temperature and wait for it to be reached";
-    } else {
-        if (FLAVOR_IS_NOT(gcfopenfl))
-        code = "M104";
-        comment = "set temperature";
+    if (FLAVOR_IS_NOT(gcfopenfl)){
+        std::string code, comment;
+        if (wait && FLAVOR_IS_NOT(gcfTeacup)) {
+            code = "M109";
+            comment = "set temperature and wait for it to be reached";
+        } else {
+            if (FLAVOR_IS_NOT(gcfopenfl))
+            code = "M104";
+            comment = "set temperature";
+        }
+        
+        std::ostringstream gcode;
+        gcode << code << " ";
+        if (FLAVOR_IS(gcfMach3) || FLAVOR_IS(gcfMachinekit) || FLAVOR_IS_NOT(gcfopenfl)) {
+            gcode << "P";
+        } else {
+            gcode << "S";
+        }
+
+        gcode << temperature;
+        if (tool != -1 && 
+            ( (this->multiple_extruders && ! m_single_extruder_multi_material) ||
+              FLAVOR_IS(gcfMakerWare) || FLAVOR_IS(gcfSailfish)) ) {
+            gcode << " T" << tool;
+        }
+        gcode << " ; " << comment << "\n";
+        
+        if (FLAVOR_IS(gcfTeacup) && wait)
+            gcode << "M116 ; wait for temperature to be reached\n";
     }
     
-    std::ostringstream gcode;
-    gcode << code << " ";
-    if (FLAVOR_IS(gcfMach3) || FLAVOR_IS(gcfMachinekit) || FLAVOR_IS_NOT(gcfopenfl)) {
-        gcode << "P";
-    } else {
-        gcode << "S";
-    }
     if (FLAVOR_IS(gcfopenfl)) {
         gcode << "0x01 LaserPowerLevel ";
+        gcode << temperature;
     }
-    gcode << temperature;
-    if (tool != -1 && 
-        ( (this->multiple_extruders && ! m_single_extruder_multi_material) ||
-          FLAVOR_IS(gcfMakerWare) || FLAVOR_IS(gcfSailfish)) ) {
-        gcode << " T" << tool;
-    }
-    gcode << " ; " << comment << "\n";
-    
-    if (FLAVOR_IS(gcfTeacup) && wait)
-        gcode << "M116 ; wait for temperature to be reached\n";
     
     return gcode.str();
 }
