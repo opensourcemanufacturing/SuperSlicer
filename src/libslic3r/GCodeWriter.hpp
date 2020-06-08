@@ -111,6 +111,9 @@ private:
     Vec3d               m_pos = Vec3d::Zero();
     mutable double      m_last_speed;
 
+    // the number of laser ticks per second - this must be 60,000.
+    const double        m_laserticks = 60,000;
+
     std::string _travel_to_z(double z, const std::string &comment);
     std::string _retract(double length, double restart_extra, const std::string &comment);
 
