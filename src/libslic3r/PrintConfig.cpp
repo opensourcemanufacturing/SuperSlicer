@@ -4511,9 +4511,10 @@ std::string FullPrintConfig::validate()
         return "Invalid value for --first-layer-height";
 
     // --filament-diameter
-    for (double fd : this->filament_diameter.values)
-        if (fd < 1)
-            return "Invalid value for --filament-diameter";
+    // Commented out - need to fix later (OpenFL laser size < 1)
+    //for (double fd : this->filament_diameter.values)
+    //    if (fd < 1)
+    //        return "Invalid value for --filament-diameter";
 
     // --nozzle-diameter
     for (double nd : this->nozzle_diameter.values)
