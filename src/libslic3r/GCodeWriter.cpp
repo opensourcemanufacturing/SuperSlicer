@@ -443,12 +443,14 @@ std::string GCodeWriter::travel_to_z(double z, const std::string &comment)
 std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
 {
 
-
+    //Constant Z for OpenFL - Form1+ uses relative Z moves
+    const float z_travel_openfl = XYZF_NUM(this->config.travel_speed.value);
+    
     if(FLAVOR_IS(gcfopenfl)){        
         m_pos.z() = z;
         
         std::ostringstream gcode;
-        gcode << "0x04 ZFeedRate " << XYZF_NUM(this->config.travel_speed.value);
+        gcode << "0x04 ZFeedRate " << z_travel_openfl * 400;
         gcode << "\n";
         gcode << "0x03 ZMove ";
         gcode << XYZF_NUM(z);
