@@ -314,6 +314,9 @@ std::string GCodeWriter::toolchange(unsigned int tool_id)
 std::string GCodeWriter::set_speed(double F, const std::string &comment, const std::string &cooling_marker) const
 {        
     std::ostringstream gcode;
+    // Convert mm per min to ticks per second
+    // The extrude function will multiply the extrusion distance by this number
+    // The result will be the number of ticks between two X/Y points
     m_last_speed = (1000/F);
 
     if (FLAVOR_IS(gcfopenfl)){
