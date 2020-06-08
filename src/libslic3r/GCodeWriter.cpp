@@ -88,44 +88,42 @@ std::string GCodeWriter::postamble() const
 
 std::string GCodeWriter::set_temperature(unsigned int temperature, bool wait, int tool) const
 {
-    if (wait && (FLAVOR_IS(gcfMakerWare) || FLAVOR_IS(gcfSailfish)))
+    //assign temperature to the laser_power variable (for OpenFL)
+    laser_power = temperature;
+
+    if (wait && (FLAVOR_IS(gcfMakerWare) || FLAVOR_IS(gcfSailfish || FLAVOR_IS(gcfopenfl))))
         return "";    
 
-    if (FLAVOR_IS_NOT(gcfopenfl)){
-        std::string code, comment;
-        if (wait && FLAVOR_IS_NOT(gcfTeacup)) {
-            code = "M109";
-            comment = "set temperature and wait for it to be reached";
-        } else {
-            if (FLAVOR_IS_NOT(gcfopenfl))
-            code = "M104";
-            comment = "set temperature";
-        }
-        
-        std::ostringstream gcode;
-        gcode << code << " ";
-        if (FLAVOR_IS(gcfMach3) || FLAVOR_IS(gcfMachinekit) || FLAVOR_IS_NOT(gcfopenfl)) {
-            gcode << "P";
-        } else {
-            gcode << "S";
-        }
-
-        gcode << temperature;
-        if (tool != -1 && 
-            ( (this->multiple_extruders && ! m_single_extruder_multi_material) ||
-              FLAVOR_IS(gcfMakerWare) || FLAVOR_IS(gcfSailfish)) ) {
-            gcode << " T" << tool;
-        }
-        gcode << " ; " << comment << "\n";
-        
-        if (FLAVOR_IS(gcfTeacup) && wait)
-            gcode << "M116 ; wait for temperature to be reached\n";
-
+    
+    std::string code, comment;
+    if (wait && FLAVOR_IS_NOT(gcfTeacup)) {
+        code = "M109";
+        comment = "set temperature and wait for it to be reached";
+    } else {
+        if (FLAVOR_IS_NOT(gcfopenfl))
+        code = "M104";
+        comment = "set temperature";
     }
+    
     std::ostringstream gcode;
-    if (FLAVOR_IS(gcfopenfl)) {
-        gcode << "0x01 LaserPowerLevel ";
-        gcode << temperature;
+    gcode << code << " ";
+    if (FLAVOR_IS(gcfMach3) || FLAVOR_IS(gcfMachinekit) || FLAVOR_IS_NOT(gcfopenfl)) {
+        gcode << "P";
+    } else {
+        gcode << "S";
+    }
+
+    gcode << temperature;
+    if (tool != -1 && 
+        ( (this->multiple_extruders && ! m_single_extruder_multi_material) ||
+          FLAVOR_IS(gcfMakerWare) || FLAVOR_IS(gcfSailfish)) ) {
+        gcode << " T" << tool;
+    }
+    gcode << " ; " << comment << "\n";
+    
+    if (FLAVOR_IS(gcfTeacup) && wait)
+        gcode << "M116 ; wait for temperature to be reached\n";
+    
         
     }
     
@@ -484,7 +482,7 @@ bool GCodeWriter::will_move_z(double z) const
 }
 
 
-std::string GCodeWriter::extrude_to_xy(unsigned int temperature, const Vec2d &point, double dE, const std::string &comment)
+std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std::string &comment)
 {
     
     if (FLAVOR_IS(gcfopenfl)) {
@@ -493,7 +491,7 @@ std::string GCodeWriter::extrude_to_xy(unsigned int temperature, const Vec2d &po
         bool is_extrude = m_tool->extrude(dE) != 0;
         std::ostringstream gcode;
         gcode << "0x01 LaserPowerLevel ";
-        gcode << temperature; 
+        gcode << laser_power; 
         gcode << "\n";
         gcode << "0x00 XY Move 1\n";
         gcode << "  LaserPoint(";
