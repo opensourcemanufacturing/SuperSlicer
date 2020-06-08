@@ -357,7 +357,7 @@ std::string GCodeWriter::travel_to_xy(const Vec2d &point, const std::string &com
         std::ostringstream gcode;
         gcode << "0x01 LaserPowerLevel 0\n";
         gcode << "0x00 XY Move 1\n";
-        gcode << "LaserPoint(";
+        gcode << "  LaserPoint(";
         gcode << "x=" << round(point.x() * 524.28);
         gcode << ", y=" << round(point.y() * 524.28);
         gcode << ", dt=0";
