@@ -492,13 +492,16 @@ std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std:
         m_pos.y() = point.y();
         bool is_extrude = m_tool->extrude(dE) != 0;
         std::ostringstream gcode;
-        gcode << "0x01 LaserPowerLevel 43074\n";
+        gcode << "0x01 LaserPowerLevel ";
+        gcode << temperature; 
+        gcode << "\n";
         gcode << "0x00 XY Move 1\n";
         gcode << "  LaserPoint(";
         gcode << "x=" << round(point.x() * 524.28);
         gcode << ", y=" << round(point.y() * 524.28);
         gcode << ", dt=" << round(m_last_speed * (m_tool->E()));
         gcode << ")\n";
+        gcode << "0x01 LaserPowerLevel 0\n"
         return gcode.str();
     } else {
         m_pos.x() = point.x();
