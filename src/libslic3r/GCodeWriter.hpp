@@ -12,7 +12,7 @@ namespace Slic3r {
 
 class GCodeWriter {
 public:
-    double m_last_speed;
+
     static std::string PausePrintCode;
     GCodeConfig config;
     bool multiple_extruders;
@@ -109,6 +109,7 @@ private:
     bool                m_last_bed_temperature_reached;
     double              m_lifted;
     Vec3d               m_pos = Vec3d::Zero();
+    mutable double      m_last_speed;
 
     std::string _travel_to_z(double z, const std::string &comment);
     std::string _retract(double length, double restart_extra, const std::string &comment);
