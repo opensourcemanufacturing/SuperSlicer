@@ -315,9 +315,10 @@ std::string GCodeWriter::set_speed(double F, const std::string &comment, const s
 {        
     std::ostringstream gcode;
     // Convert mm per min to ticks per second
+    // Divide 60,000 (ticks per second) by the feed rate divided by 60
     // The extrude function will multiply the extrusion distance by this number
     // The result will be the number of ticks between two X/Y points
-    m_last_speed = (1000 / (F));
+    m_last_speed = (60000 / (F/60));
 
     if (FLAVOR_IS(gcfopenfl)){
         assert(F > 0.);
@@ -349,8 +350,7 @@ std::string GCodeWriter::travel_to_xy(const Vec2d &point, const std::string &com
         gcode << "LaserPoint(";
         gcode << "x=" << round(point.x() * 524.28);
         gcode << ", y=" << round(point.y() * 524.28);
-        gcode << ", dt=" << m_last_speed;
-        //gcode << ", dt=" << m_last_speed * (m_tool->E());
+        gcode << ", dt=" << m_last_speed * (m_tool->E());
         gcode << ")\n";
         return gcode.str();
     } else {
@@ -396,8 +396,7 @@ std::string GCodeWriter::travel_to_xyz(const Vec3d &point, const std::string &co
         gcode << "LaserPoint(";
         gcode << "x=" << round(point.x() * 524.28);
         gcode << ", y=" << round(point.y() * 524.28);
-        //gcode << ", dt=" << m_last_speed * (m_tool->E());
-        gcode << ", dt=" << m_last_speed;
+        gcode << ", dt=" << m_last_speed * (m_tool->E());
         gcode << ")\n";
         COMMENT(comment);
         gcode << "\n";
@@ -488,8 +487,7 @@ std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std:
         gcode << "LaserPoint(";
         gcode << "x=" << round(point.x() * 524.28);
         gcode << ", y=" << round(point.y() * 524.28);
-        //gcode << ", dt=" << m_last_speed * (m_tool->E());
-        gcode << ", dt=" << m_last_speed;
+        gcode << ", dt=" << m_last_speed * (m_tool->E());
         gcode << ")\n";
         return gcode.str();
     } else {
