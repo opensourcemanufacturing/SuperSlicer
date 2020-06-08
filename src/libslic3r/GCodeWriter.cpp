@@ -444,7 +444,7 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
 {
 
     //Constant Z for OpenFL - Form1+ uses relative Z moves
-    const float z_travel_openfl = XYZF_NUM(this->config.travel_speed.value);
+    const float z_travel_openfl = (this->config.travel_speed.value);
     
     if(FLAVOR_IS(gcfopenfl)){        
         m_pos.z() = z;
