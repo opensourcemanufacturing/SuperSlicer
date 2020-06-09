@@ -461,14 +461,23 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
     // This section sets Z travel FLP commands for the OpenFL Flavor (Formlabs Form1+)
     // Formlabs uses FLP format, not g-code.
     // OpenFL Needs Z moves to be relative, not absolute
+    float m_last_z;
+    float m_pos_z;
+
     if(FLAVOR_IS(gcfopenfl)){        
         m_pos.z() = z;
+
+        if m_pos.z() - m_last_z <= 0 {
+            m_z_move = m_pos.z();
+        else
+            m_z_move = m_pos.z() - m_last_z
+        }
         
         std::ostringstream gcode;
         gcode << "0x04 ZFeedRate " << XYZF_NUM(this->config.travel_speed.value);
         gcode << "\n";
         gcode << "0x03 ZMove ";
-        gcode << PrintObjectConfig::layer_height;
+        gcode << m_z_move;
         gcode << "\n";
         return gcode.str();
 
@@ -482,6 +491,13 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
         COMMENT(comment);
         gcode << "\n";
         return gcode.str();
+
+    /* variable for storing the Z position at the end of the travel move,
+    so we can subtract it from m_pos.z()  
+    */
+
+    m_last_z = m_pos.z();
+
     }
 }
 
