@@ -442,7 +442,7 @@ std::string GCodeWriter::travel_to_z(double z, const std::string &comment)
         reducing the lift amount that will be used for unlift. */
 
 
-    if (!this->will_move_z(z) || FLAVOR_IS_NOT(gcfopenfl)) {
+    if (!this->will_move_z(z)) {
         double nominal_z = m_pos.z() - m_lifted;
         m_lifted -= (z - nominal_z);
         if (std::abs(m_lifted) < EPSILON)
@@ -467,22 +467,24 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
 
     if(FLAVOR_IS(gcfopenfl)){ 
         // declare variables
-        float m_z_move;
-        float m_last_z = m_pos.z();
-        m_pos.z() = z;
+        float m_z_move; // layer height variable
+        float m_last_z = m_pos.z(); // hold the value of the last Z move
+        m_pos.z() = z * 400; // value of next Z move (in microsteps)
         
 
-        if (m_pos.z() > m_last_z){
-            m_z_move = m_pos.z() - m_last_z;
+        if (m_pos.z() > m_last_z){ // If this is not the first layer
+            m_z_move = m_pos.z() - m_last_z; // layer height = next z move minus last z move
         } else {
-            m_z_move = m_pos.z();
+            m_z_move = m_pos.z(); // If this is the first layer, layer height = next z move
         }
 
         std::ostringstream gcode;
-        gcode << "0x04 ZFeedRate " << XYZF_NUM(this->config.travel_speed.value);
+        gcode << "0x04 ZFeedRate " << XYZF_NUM(this->config.travel_speed.value); // FLP feed rate command
+        gcode << "\n";
+        gcode << "0x03 ZMove 2000"; // 5mm peel lift (in microsteps)
         gcode << "\n";
         gcode << "0x03 ZMove ";
-        gcode << m_z_move;
+        gcode << -2000 + m_z_move; // unpeel and set for next layer
         gcode << "\n";
         return gcode.str();
 
