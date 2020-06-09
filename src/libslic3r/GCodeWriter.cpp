@@ -469,11 +469,11 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
         // declare variables
         int m_z_move; // layer height variable
         double m_last_z = m_pos.z(); // hold the value of the last Z move
-        m_pos.z() = z; // value of next Z move in mm
+        m_pos.z() = z * 400; // value of next Z move in microsteps
         
 
         if (m_last_z > 0){ // If this is not the first layer do this:
-            m_z_move = (m_pos.z() * 400) - (m_last_z * 400); // layer height = next z move minus last z move
+            m_z_move = m_pos.z() - m_last_z; // layer height = next z move minus last z move
             std::ostringstream gcode;
             gcode << "0x04 ZFeedRate " << XYZF_NUM(this->config.travel_speed.value); // FLP feed rate command
             gcode << "\n";
@@ -484,7 +484,7 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
             gcode << "\n";
             return gcode.str();
         } else { // otherwise do this, because it is a first layer
-            m_z_move = m_pos.z() * 400; 
+            m_z_move = m_pos.z(); 
             std::ostringstream gcode;
             gcode << "0x04 ZFeedRate " << XYZF_NUM(this->config.travel_speed.value); // FLP feed rate command
             gcode << "\n";
