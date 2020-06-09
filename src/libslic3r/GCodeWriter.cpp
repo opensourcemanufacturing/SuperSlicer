@@ -467,7 +467,7 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
 
     if(FLAVOR_IS(gcfopenfl)){ 
         // declare variables
-        float m_z_move; // layer height variable
+        int m_z_move; // layer height variable
         float m_last_z = m_pos.z(); // hold the value of the last Z move
         m_pos.z() = z; // value of next Z move (in microsteps)
         
@@ -480,7 +480,7 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
             gcode << "0x03 ZMove 2000"; // 5mm peel lift (in microsteps)
             gcode << "\n";
             gcode << "0x03 ZMove ";
-            gcode << -2000 + round(m_z_move * 400); // unpeel and set for next layer
+            gcode << -2000 + (m_z_move * 400); // unpeel and set for next layer
             gcode << "\n";
             return gcode.str();
         } else { // otherwise do this, because it is a first layer
@@ -489,7 +489,7 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
             gcode << "0x04 ZFeedRate " << XYZF_NUM(this->config.travel_speed.value); // FLP feed rate command
             gcode << "\n";
             gcode << "0x03 ZMove ";
-            gcode << round(m_z_move * 400); // first layer height in microsteps
+            gcode << (m_z_move * 400); // first layer height in microsteps
             gcode << "\n";
             return gcode.str();
         }
