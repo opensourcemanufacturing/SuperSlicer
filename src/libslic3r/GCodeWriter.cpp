@@ -468,7 +468,7 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
     if(FLAVOR_IS(gcfopenfl)){ 
         // declare variables
         float m_z_move;
-        float m_last_z = m_pos.z()
+        float m_last_z = m_pos.z();
         m_pos.z() = z;
         
 
