@@ -441,9 +441,8 @@ std::string GCodeWriter::travel_to_z(double z, const std::string &comment)
         we don't perform the move but we only adjust the nominal Z by
         reducing the lift amount that will be used for unlift. */
 
-    // This does not apply to OpenFL
 
-    if (!this->will_move_z(z) || FLAVOR_IS_NOT(gcfopenfl)) {
+    if (!this->will_move_z(z)) {
         double nominal_z = m_pos.z() - m_lifted;
         m_lifted -= (z - nominal_z);
         if (std::abs(m_lifted) < EPSILON)
@@ -460,23 +459,23 @@ std::string GCodeWriter::travel_to_z(double z, const std::string &comment)
 std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
 {
 
-    // This section sets Z travel FLP commands for the OpenFL Flavor (Formlabs Form1+)
-    // Formlabs uses FLP format, not g-code.
-    // OpenFL Needs Z moves to be relative, not absolute
-    float m_last_z;
-    float m_pos_z;
-    float m_z_move;
+    /* This section sets Z travel FLP commands for the OpenFL Flavor (Formlabs Form1+)
+    Formlabs uses FLP format, not g-code. OpenFL Needs Z moves to be relative, not absolute
+    The variable m_z_move will hold the value for the next z move and is calculated based on 
+    the last z position (m_last_z).
+    */ z move.
 
-    if(FLAVOR_IS(gcfopenfl)){        
+    if(FLAVOR_IS(gcfopenfl)){ 
+        float m_z_move;
+        float m_last_z = m_pos.z();
         m_pos.z() = z;
 
-        if (m_pos.z() - m_last_z <= 0) {
-            m_z_move = m_pos.z();
+        if (m_pos.z() > m_last_z){
+            m_z_move = m_poz_z.() - m_last_z;
         } else {
-            m_z_move = m_pos.z() - m_last_z;
+            m_z_move = m_poz_z.();
         }
-        
-        
+
         std::ostringstream gcode;
         gcode << "0x04 ZFeedRate " << XYZF_NUM(this->config.travel_speed.value);
         gcode << "\n";
@@ -501,7 +500,6 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
     */
 
     }
-    m_last_z = m_pos.z();
 }
 
 bool GCodeWriter::will_move_z(double z) const
