@@ -463,7 +463,7 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
     Formlabs uses FLP format, not g-code. OpenFL Needs Z moves to be relative, not absolute
     The variable m_z_move will hold the value for the next z move and is calculated based on 
     the last z position (m_last_z).
-    */ z move.
+    */
 
     if(FLAVOR_IS(gcfopenfl)){ 
         float m_z_move;
