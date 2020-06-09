@@ -328,7 +328,7 @@ std::string GCodeWriter::set_speed(double F, const std::string &comment, const s
     std::ostringstream gcode;
     // Convert mm per min to ticks per second
     // Divide 60,000 (ticks per second) by the feed rate divided by 60
-    // The extrude functions will multiply the extrusion distance by this number
+    // The extrude functions will multiply the XY distance by this number
     // The result will be the number of ticks between two X/Y points
     m_last_speed = (m_laser_ticks / (F/60));
 
@@ -358,10 +358,17 @@ std::string GCodeWriter::travel_to_xy(const Vec2d &point, const std::string &com
         double m_last_pos_x = m_pos.x();
         double m_last_pos_y = m_pos.y();
         m_pos.x() = point.x();
-        m_pos.y() = point.y();
+        m_pos.y() = point.y();            
 
-        double m_side_x = (m_last_pos_x - m_pos.x()) * (m_last_pos_x - m_pos.x());
-        double m_side_y = (m_last_pos_y - m_pos.y()) * (m_last_pos_y - m_pos.y());
+        // Using the Pythagorean theorum to find the distance between the current position and the next position.
+
+        if (m_last_pos_x != 0 || my_last_pos_x != 0){ // if the starting point is not the origin point, do this:
+            double m_side_x = (m_last_pos_x - m_pos.x()) * (m_last_pos_x - m_pos.x());
+            double m_side_y = (m_last_pos_y - m_pos.y()) * (m_last_pos_y - m_pos.y());
+        } else { // otherwise, do this because it the starting point is the origin
+            double m_side_x = m_pos.x() * m_pos.x();
+            double m_side_y = m_pos.y() * m_pos.y();
+        }
 
         double m_distance = sqrt(m_side_x + m_side_y);
 
@@ -421,8 +428,15 @@ std::string GCodeWriter::travel_to_xyz(const Vec3d &point, const std::string &co
         m_pos.x() = point.x();
         m_pos.y() = point.y();
 
-        double m_side_x = (m_last_pos_x - m_pos.x()) * (m_last_pos_x - m_pos.x());
-        double m_side_y = (m_last_pos_y - m_pos.y()) * (m_last_pos_y - m_pos.y());
+        // Using the Pythagorean theorum to find the distance between the current position and the next position.
+
+        if (m_last_pos_x != 0 || my_last_pos_x != 0){ // if the starting point is not the origin point, do this:
+            double m_side_x = (m_last_pos_x - m_pos.x()) * (m_last_pos_x - m_pos.x());
+            double m_side_y = (m_last_pos_y - m_pos.y()) * (m_last_pos_y - m_pos.y());
+        } else { // otherwise, do this because it the starting point is the origin
+            double m_side_x = m_pos.x() * m_pos.x();
+            double m_side_y = m_pos.y() * m_pos.y();
+        }
 
         double m_distance = sqrt(m_side_x + m_side_y);
         
@@ -559,8 +573,15 @@ std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std:
         m_pos.x() = point.x();
         m_pos.y() = point.y();
 
-        double m_side_x = (m_last_pos_x - m_pos.x()) * (m_last_pos_x - m_pos.x());
-        double m_side_y = (m_last_pos_y - m_pos.y()) * (m_last_pos_y - m_pos.y());
+        // Using the Pythagorean theorum to find the distance between the current position and the next position.
+
+        if (m_last_pos_x != 0 || my_last_pos_x != 0){ // if the starting point is not the origin point, do this:
+            double m_side_x = (m_last_pos_x - m_pos.x()) * (m_last_pos_x - m_pos.x());
+            double m_side_y = (m_last_pos_y - m_pos.y()) * (m_last_pos_y - m_pos.y());
+        } else { // otherwise, do this because it the starting point is the origin
+            double m_side_x = m_pos.x() * m_pos.x();
+            double m_side_y = m_pos.y() * m_pos.y();
+        }
 
         double m_distance = sqrt(m_side_x + m_side_y);
 
@@ -609,8 +630,15 @@ std::string GCodeWriter::extrude_to_xyz(const Vec3d &point, double dE, const std
             m_pos.x() = point.x();
             m_pos.y() = point.y();
 
-            double m_side_x = (m_last_pos_x - m_pos.x()) * (m_last_pos_x - m_pos.x());
-            double m_side_y = (m_last_pos_y - m_pos.y()) * (m_last_pos_y - m_pos.y());
+            // Using the Pythagorean theorum to find the distance between the current position and the next position.
+
+            if (m_last_pos_x != 0 || my_last_pos_x != 0){ // if the starting point is not the origin point, do this:
+                double m_side_x = (m_last_pos_x - m_pos.x()) * (m_last_pos_x - m_pos.x());
+                double m_side_y = (m_last_pos_y - m_pos.y()) * (m_last_pos_y - m_pos.y());
+            } else { // otherwise, do this because it the starting point is the origin
+                double m_side_x = m_pos.x() * m_pos.x();
+                double m_side_y = m_pos.y() * m_pos.y();
+            }
 
             double m_distance = sqrt(m_side_x + m_side_y);
             
