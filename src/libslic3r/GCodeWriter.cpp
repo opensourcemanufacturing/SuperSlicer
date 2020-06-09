@@ -5,6 +5,7 @@
 #include <iostream>
 #include <map>
 #include <assert.h>
+#include <math.h> // need math for the sqrt function
 
 #define FLAVOR_IS(val) this->config.gcode_flavor == val
 #define FLAVOR_IS_NOT(val) this->config.gcode_flavor != val
@@ -354,16 +355,23 @@ std::string GCodeWriter::travel_to_xy(const Vec2d &point, const std::string &com
     Laser power is set to zero, but ticks are still needed. 
     */
     if (FLAVOR_IS(gcfopenfl)){
+        double m_last_pos_x = m_pos.x();
+        double m_last_pos_y = m_pos.y();
         m_pos.x() = point.x();
         m_pos.y() = point.y();
-    
+
+        double m_side_x = (m_last_pos_x - m_pos.x()) * (m_last_pos_x - m_pos.x());
+        double m_side_y = (m_last_pos_y - m_pos.y()) * (m_last_pos_y - m_pos.y());
+
+        double m_distance = sqrt(m_side_x + m_side_y);
+
         std::ostringstream gcode;
         gcode << "0x01 LaserPowerLevel 0\n";
         gcode << "0x00 XYMove 1\n";
         gcode << "  LaserPoint(";
         gcode << "x=" << round(point.x() * 524.28);
         gcode << ", y=" << round(point.y() * 524.28);
-        gcode << ", dt=" << round(m_last_speed * (m_tool->E()));
+        gcode << ", dt=" << round(m_last_speed * m_distance);
         gcode << ")\n";
         return gcode.str();
 
@@ -408,15 +416,23 @@ std::string GCodeWriter::travel_to_xyz(const Vec3d &point, const std::string &co
      will not move the Z axis, but it's best to not use this. */
     if (FLAVOR_IS(gcfopenfl)) {
         m_lifted = 0;
-        m_pos = point;
+        double m_last_pos_x = m_pos.x();
+        double m_last_pos_y = m_pos.y();
+        m_pos.x() = point.x();
+        m_pos.y() = point.y();
+
+        double m_side_x = (m_last_pos_x - m_pos.x()) * (m_last_pos_x - m_pos.x());
+        double m_side_y = (m_last_pos_y - m_pos.y()) * (m_last_pos_y - m_pos.y());
+
+        double m_distance = sqrt(m_side_x + m_side_y);
         
         std::ostringstream gcode;
         gcode << "0x01 LaserPowerLevel 0\n";
         gcode << "0x00 XYMove 1\n";
         gcode << "  LaserPoint(";
-        gcode << "x=" << round(point.x() * 524.28);
-        gcode << ", y=" << round(point.y() * 524.28);
-        gcode << ", dt=" << round(m_last_speed * (m_tool->E()));
+        gcode << "x=" << round(m_pos.x() * 524.28);
+        gcode << ", y=" << round(m_pos.y() * 524.28);
+        gcode << ", dt=" << round(m_last_speed * m_distance);
         gcode << ")\n";
         return gcode.str();
 
@@ -538,6 +554,16 @@ std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std:
     // The laser_power variable is linked to the extruder temperature 
     // and is defined in mW (maximum is 64mW).
 
+        double m_last_pos_x = m_pos.x();
+        double m_last_pos_y = m_pos.y();
+        m_pos.x() = point.x();
+        m_pos.y() = point.y();
+
+        double m_side_x = (m_last_pos_x - m_pos.x()) * (m_last_pos_x - m_pos.x());
+        double m_side_y = (m_last_pos_y - m_pos.y()) * (m_last_pos_y - m_pos.y());
+
+        double m_distance = sqrt(m_side_x + m_side_y);
+
     if (FLAVOR_IS(gcfopenfl)) {
         m_pos.x() = point.x();
         m_pos.y() = point.y();
@@ -548,9 +574,9 @@ std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std:
         gcode << "\n";
         gcode << "0x00 XYMove 1\n";
         gcode << "  LaserPoint(";
-        gcode << "x=" << round(point.x() * 524.28);
-        gcode << ", y=" << round(point.y() * 524.28);
-        gcode << ", dt=" << round(m_last_speed * (m_tool->E()));
+        gcode << "x=" << round(m_pos.x() * 524.28);
+        gcode << ", y=" << round(m_pos.y() * 524.28);
+        gcode << ", dt=" << round(m_last_speed * m_distance);
         gcode << ")\n";
         return gcode.str();
     // This is the XY extrusion settings for all other flavors
@@ -578,18 +604,23 @@ std::string GCodeWriter::extrude_to_xyz(const Vec3d &point, double dE, const std
     // So, the goal is for these settings to never be used.
 
         if (FLAVOR_IS(gcfopenfl)) {
+            double m_last_pos_x = m_pos.x();
+            double m_last_pos_y = m_pos.y();
             m_pos.x() = point.x();
             m_pos.y() = point.y();
-            m_lifted = 0;
-            bool is_extrude = m_tool->extrude(dE) != 0;
+
+            double m_side_x = (m_last_pos_x - m_pos.x()) * (m_last_pos_x - m_pos.x());
+            double m_side_y = (m_last_pos_y - m_pos.y()) * (m_last_pos_y - m_pos.y());
+
+            double m_distance = sqrt(m_side_x + m_side_y);
             
             std::ostringstream gcode;
             gcode << "XYZ TEST - 0x01 LaserPowerLevel 0\n";
             gcode << "0x00 XYMove 1\n";
             gcode << "  LaserPoint(";
-            gcode << "x=" << round(point.x() * 524.28);
-            gcode << ", y=" << round(point.y() * 524.28);
-            gcode << ", dt=" << round(m_last_speed * (m_tool->E()));
+            gcode << "x=" << round(m_pos.x() * 524.28);
+            gcode << ", y=" << round(m_pos.y() * 524.28);
+            gcode << ", dt=" << round(m_last_speed * m_distance);
             gcode << ")\n";
             return gcode.str();
         // These are the settings for all other flavors.
