@@ -355,6 +355,8 @@ std::string GCodeWriter::travel_to_xy(const Vec2d &point, const std::string &com
     Laser power is set to zero, but ticks are still needed. 
     */
     if (FLAVOR_IS(gcfopenfl)){
+        double m_side_x;
+        double m_side_y;
         double m_last_pos_x = m_pos.x();
         double m_last_pos_y = m_pos.y();
         m_pos.x() = point.x();
@@ -363,11 +365,11 @@ std::string GCodeWriter::travel_to_xy(const Vec2d &point, const std::string &com
         // Using the Pythagorean theorum to find the distance between the current position and the next position.
 
         if (m_last_pos_x != 0 || my_last_pos_x != 0){ // if the starting point is not the origin point, do this:
-            double m_side_x = (m_last_pos_x - m_pos.x()) * (m_last_pos_x - m_pos.x());
-            double m_side_y = (m_last_pos_y - m_pos.y()) * (m_last_pos_y - m_pos.y());
+            m_side_x = (m_last_pos_x - m_pos.x()) * (m_last_pos_x - m_pos.x());
+            m_side_y = (m_last_pos_y - m_pos.y()) * (m_last_pos_y - m_pos.y());
         } else { // otherwise, do this because it the starting point is the origin
-            double m_side_x = m_pos.x() * m_pos.x();
-            double m_side_y = m_pos.y() * m_pos.y();
+            m_side_x = m_pos.x() * m_pos.x();
+            m_side_y = m_pos.y() * m_pos.y();
         }
 
         double m_distance = sqrt(m_side_x + m_side_y);
@@ -422,6 +424,8 @@ std::string GCodeWriter::travel_to_xyz(const Vec3d &point, const std::string &co
      We do not want to use this if at all possible. The command
      will not move the Z axis, but it's best to not use this. */
     if (FLAVOR_IS(gcfopenfl)) {
+        double m_side_x;
+        double m_side_y;
         m_lifted = 0;
         double m_last_pos_x = m_pos.x();
         double m_last_pos_y = m_pos.y();
@@ -431,11 +435,11 @@ std::string GCodeWriter::travel_to_xyz(const Vec3d &point, const std::string &co
         // Using the Pythagorean theorum to find the distance between the current position and the next position.
 
         if (m_last_pos_x != 0 || my_last_pos_x != 0){ // if the starting point is not the origin point, do this:
-            double m_side_x = (m_last_pos_x - m_pos.x()) * (m_last_pos_x - m_pos.x());
-            double m_side_y = (m_last_pos_y - m_pos.y()) * (m_last_pos_y - m_pos.y());
+            m_side_x = (m_last_pos_x - m_pos.x()) * (m_last_pos_x - m_pos.x());
+            m_side_y = (m_last_pos_y - m_pos.y()) * (m_last_pos_y - m_pos.y());
         } else { // otherwise, do this because it the starting point is the origin
-            double m_side_x = m_pos.x() * m_pos.x();
-            double m_side_y = m_pos.y() * m_pos.y();
+            m_side_x = m_pos.x() * m_pos.x();
+            m_side_y = m_pos.y() * m_pos.y();
         }
 
         double m_distance = sqrt(m_side_x + m_side_y);
@@ -568,6 +572,9 @@ std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std:
     // The laser_power variable is linked to the extruder temperature 
     // and is defined in mW (maximum is 64mW).
 
+    if (FLAVOR_IS(gcfopenfl)) {
+        double m_side_x;
+        double m_side_y;
         double m_last_pos_x = m_pos.x();
         double m_last_pos_y = m_pos.y();
         m_pos.x() = point.x();
@@ -576,19 +583,14 @@ std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std:
         // Using the Pythagorean theorum to find the distance between the current position and the next position.
 
         if (m_last_pos_x != 0 || my_last_pos_x != 0){ // if the starting point is not the origin point, do this:
-            double m_side_x = (m_last_pos_x - m_pos.x()) * (m_last_pos_x - m_pos.x());
-            double m_side_y = (m_last_pos_y - m_pos.y()) * (m_last_pos_y - m_pos.y());
+            m_side_x = (m_last_pos_x - m_pos.x()) * (m_last_pos_x - m_pos.x());
+            m_side_y = (m_last_pos_y - m_pos.y()) * (m_last_pos_y - m_pos.y());
         } else { // otherwise, do this because it the starting point is the origin
-            double m_side_x = m_pos.x() * m_pos.x();
-            double m_side_y = m_pos.y() * m_pos.y();
+            m_side_x = m_pos.x() * m_pos.x();
+            m_side_y = m_pos.y() * m_pos.y();
         }
-
         double m_distance = sqrt(m_side_x + m_side_y);
 
-    if (FLAVOR_IS(gcfopenfl)) {
-        m_pos.x() = point.x();
-        m_pos.y() = point.y();
-        bool is_extrude = m_tool->extrude(dE) != 0;
         std::ostringstream gcode;
         gcode << "0x01 LaserPowerLevel ";
         gcode << laser_power; 
@@ -625,6 +627,8 @@ std::string GCodeWriter::extrude_to_xyz(const Vec3d &point, double dE, const std
     // So, the goal is for these settings to never be used.
 
         if (FLAVOR_IS(gcfopenfl)) {
+            double m_side_x;
+            double m_side_y;
             double m_last_pos_x = m_pos.x();
             double m_last_pos_y = m_pos.y();
             m_pos.x() = point.x();
@@ -633,11 +637,11 @@ std::string GCodeWriter::extrude_to_xyz(const Vec3d &point, double dE, const std
             // Using the Pythagorean theorum to find the distance between the current position and the next position.
 
             if (m_last_pos_x != 0 || my_last_pos_x != 0){ // if the starting point is not the origin point, do this:
-                double m_side_x = (m_last_pos_x - m_pos.x()) * (m_last_pos_x - m_pos.x());
-                double m_side_y = (m_last_pos_y - m_pos.y()) * (m_last_pos_y - m_pos.y());
+                m_side_x = (m_last_pos_x - m_pos.x()) * (m_last_pos_x - m_pos.x());
+                m_side_y = (m_last_pos_y - m_pos.y()) * (m_last_pos_y - m_pos.y());
             } else { // otherwise, do this because it the starting point is the origin
-                double m_side_x = m_pos.x() * m_pos.x();
-                double m_side_y = m_pos.y() * m_pos.y();
+                m_side_x = m_pos.x() * m_pos.x();
+                m_side_y = m_pos.y() * m_pos.y();
             }
 
             double m_distance = sqrt(m_side_x + m_side_y);
