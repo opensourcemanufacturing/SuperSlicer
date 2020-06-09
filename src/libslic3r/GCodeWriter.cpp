@@ -359,7 +359,7 @@ std::string GCodeWriter::travel_to_xy(const Vec2d &point, const std::string &com
     
         std::ostringstream gcode;
         gcode << "0x01 LaserPowerLevel 0\n";
-        gcode << "0x00 XY Move 1\n";
+        gcode << "0x00 XYMove 1\n";
         gcode << "  LaserPoint(";
         gcode << "x=" << round(point.x() * 524.28);
         gcode << ", y=" << round(point.y() * 524.28);
@@ -412,7 +412,7 @@ std::string GCodeWriter::travel_to_xyz(const Vec3d &point, const std::string &co
         
         std::ostringstream gcode;
         gcode << "0x01 LaserPowerLevel 0\n";
-        gcode << "0x00 XY Move 1\n";
+        gcode << "0x00 XYMove 1\n";
         gcode << "  LaserPoint(";
         gcode << "x=" << round(point.x() * 524.28);
         gcode << ", y=" << round(point.y() * 524.28);
@@ -468,27 +468,27 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
     if(FLAVOR_IS(gcfopenfl)){ 
         std::ostringstream gcode;
         // declare variables
-        int m_z_move; // layer height variable
+        double m_z_move; // layer height variable
         double m_last_z = m_pos.z(); // hold the value of the last Z move
         m_pos.z() = z; // value of next Z move in mm
         
 
         if (m_last_z > 0.){ // If this is not the first layer do this:
-            m_z_move = (int(m_pos.z() * 400)) - (int(m_last_z) * 400); // layer height = next z move minus last z move times 400 microsteps
+            m_z_move = (m_pos.z() - m_last_z) * 400; // layer height = next z move minus last z move times 400 microsteps
             gcode << "0x04 ZFeedRate " << XYZF_NUM(this->config.travel_speed.value); // FLP feed rate command
             gcode << "\n";
             gcode << "0x03 ZMove 2000"; // 5mm peel lift (in microsteps)
             gcode << "\n";
             gcode << "0x03 ZMove ";
-            gcode << m_z_move - 2000; // unpeel and reset for next layer (in microsteps)
+            gcode << int(m_z_move - 2000); // unpeel and reset for next layer (in microsteps)
             gcode << "\n";
             return gcode.str();
         } else { // otherwise do this, because this is the first layer:
-            m_z_move = int(m_pos.z() * 400); 
+            m_z_move = m_pos.z() * 400; 
             gcode << "0x04 ZFeedRate " << XYZF_NUM(this->config.travel_speed.value); // FLP feed rate command
             gcode << "\n";
             gcode << "0x03 ZMove ";
-            gcode << m_z_move; // first layer height in microsteps
+            gcode << int(m_z_move); // first layer height in microsteps
             gcode << "\n";
             return gcode.str();
         }
@@ -546,7 +546,7 @@ std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std:
         gcode << "0x01 LaserPowerLevel ";
         gcode << laser_power; 
         gcode << "\n";
-        gcode << "0x00 XY Move 1\n";
+        gcode << "0x00 XYMove 1\n";
         gcode << "  LaserPoint(";
         gcode << "x=" << round(point.x() * 524.28);
         gcode << ", y=" << round(point.y() * 524.28);
@@ -585,7 +585,7 @@ std::string GCodeWriter::extrude_to_xyz(const Vec3d &point, double dE, const std
             
             std::ostringstream gcode;
             gcode << "XYZ TEST - 0x01 LaserPowerLevel 0\n";
-            gcode << "0x00 XY Move 1\n";
+            gcode << "0x00 XYMove 1\n";
             gcode << "  LaserPoint(";
             gcode << "x=" << round(point.x() * 524.28);
             gcode << ", y=" << round(point.y() * 524.28);
