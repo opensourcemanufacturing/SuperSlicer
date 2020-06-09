@@ -364,7 +364,7 @@ std::string GCodeWriter::travel_to_xy(const Vec2d &point, const std::string &com
 
         // Using the Pythagorean theorum to find the distance between the current position and the next position.
 
-        if (m_last_pos_x != 0 || my_last_pos_x != 0){ // if the starting point is not the origin point, do this:
+        if (m_last_pos_x != 0 || m_last_pos_y != 0){ // if the starting point is not the origin point, do this:
             m_side_x = (m_last_pos_x - m_pos.x()) * (m_last_pos_x - m_pos.x());
             m_side_y = (m_last_pos_y - m_pos.y()) * (m_last_pos_y - m_pos.y());
         } else { // otherwise, do this because it the starting point is the origin
@@ -434,7 +434,7 @@ std::string GCodeWriter::travel_to_xyz(const Vec3d &point, const std::string &co
 
         // Using the Pythagorean theorum to find the distance between the current position and the next position.
 
-        if (m_last_pos_x != 0 || my_last_pos_x != 0){ // if the starting point is not the origin point, do this:
+        if (m_last_pos_x != 0 || m_last_pos_y != 0){ // if the starting point is not the origin point, do this:
             m_side_x = (m_last_pos_x - m_pos.x()) * (m_last_pos_x - m_pos.x());
             m_side_y = (m_last_pos_y - m_pos.y()) * (m_last_pos_y - m_pos.y());
         } else { // otherwise, do this because it the starting point is the origin
@@ -582,7 +582,7 @@ std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std:
 
         // Using the Pythagorean theorum to find the distance between the current position and the next position.
 
-        if (m_last_pos_x != 0 || my_last_pos_x != 0){ // if the starting point is not the origin point, do this:
+        if (m_last_pos_x != 0 || m_last_pos_y != 0){ // if the starting point is not the origin point, do this:
             m_side_x = (m_last_pos_x - m_pos.x()) * (m_last_pos_x - m_pos.x());
             m_side_y = (m_last_pos_y - m_pos.y()) * (m_last_pos_y - m_pos.y());
         } else { // otherwise, do this because it the starting point is the origin
@@ -636,7 +636,7 @@ std::string GCodeWriter::extrude_to_xyz(const Vec3d &point, double dE, const std
 
             // Using the Pythagorean theorum to find the distance between the current position and the next position.
 
-            if (m_last_pos_x != 0 || my_last_pos_x != 0){ // if the starting point is not the origin point, do this:
+            if (m_last_pos_x != 0 || m_last_pos_y != 0){ // if the starting point is not the origin point, do this:
                 m_side_x = (m_last_pos_x - m_pos.x()) * (m_last_pos_x - m_pos.x());
                 m_side_y = (m_last_pos_y - m_pos.y()) * (m_last_pos_y - m_pos.y());
             } else { // otherwise, do this because it the starting point is the origin
