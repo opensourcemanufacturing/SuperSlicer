@@ -463,14 +463,15 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
     // OpenFL Needs Z moves to be relative, not absolute
     float m_last_z;
     float m_pos_z;
+    float m_z_move;
 
     if(FLAVOR_IS(gcfopenfl)){        
         m_pos.z() = z;
 
-        if m_pos.z() - m_last_z <= 0 {
+        if (m_pos.z()) - m_last_z <= 0 {
             m_z_move = m_pos.z();
         } else {
-            m_z_move = m_pos.z() - m_last_z;
+            m_z_move = (m_pos.z()) - m_last_z;
         }
         
         
