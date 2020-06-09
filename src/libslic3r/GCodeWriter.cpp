@@ -514,6 +514,7 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
         
 
          if (m_last_z > 0.){ // If this is not the first layer do this:
+             std::cout << std::setprecision(10)
              m_z_move = (m_pos.z() - m_last_z) * 400; // layer height = next z move minus last z move times 400 microsteps
              gcode << "0x04 ZFeedRate " << XYZF_NUM(this->config.travel_speed.value); // FLP feed rate command
              gcode << "\n";
@@ -525,12 +526,13 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
              gcode << " , "; 
              gcode << m_pos.z(); 
              gcode << " , "; 
-             gcode << int(m_z_move); 
-             gcode << "\n";
-             gcode << int(m_z_move - microsteps_5mm); // unpeel and reset for next layer (in microsteps)
+             gcode << m_z_move; 
+             //gcode << "\n";
+             gcode << (m_z_move - microsteps_5mm); // unpeel and reset for next layer (in microsteps)
              gcode << "\n";
              return gcode.str();
          } else { // otherwise do this, because this is the first layer:
+             std::cout << std::setprecision(10)
              m_z_move = m_pos.z() * 400; 
              gcode << "0x04 ZFeedRate " << XYZF_NUM(this->config.travel_speed.value); // FLP feed rate command
              gcode << "\n";
@@ -542,7 +544,7 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
              gcode << " , "; 
              gcode << m_pos.z(); 
              gcode << " , "; 
-             gcode << int(m_z_move); 
+             gcode << m_z_move; 
              gcode << "\n";
              return gcode.str();
          }
