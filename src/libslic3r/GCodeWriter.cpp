@@ -360,14 +360,7 @@ std::string GCodeWriter::travel_to_xy(const Vec2d &point, const std::string &com
     Laser power is set to zero, but ticks are still needed. 
     */
     if (FLAVOR_IS(gcfopenfl)){
-
-        if (F > 0){ // if F is zero, we will use the travel speed instead.
-            m_last_speed = (m_laser_ticks / (F/60));
-        } else {
-            m_last_speed = (m_laser_ticks / ((this->config.travel_speed.value)/60));
-        }
-
-
+        
         double m_side_x;
         double m_side_y;
         double m_last_pos_x = m_pos.x();
