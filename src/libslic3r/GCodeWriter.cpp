@@ -474,7 +474,7 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
         
 
         if (m_last_z > 0.){ // If this is not the first layer do this:
-            m_z_move = int(m_pos.z() * 400) - int(m_last_z) * 400; // layer height = next z move minus last z move times 400 microsteps
+            m_z_move = (int(m_pos.z() * 400)) - (int(m_last_z) * 400); // layer height = next z move minus last z move times 400 microsteps
             gcode << "0x04 ZFeedRate " << XYZF_NUM(this->config.travel_speed.value); // FLP feed rate command
             gcode << "\n";
             gcode << "0x03 ZMove 2000"; // 5mm peel lift (in microsteps)
