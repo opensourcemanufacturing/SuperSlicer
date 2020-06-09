@@ -525,7 +525,7 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
              gcode << " , "; 
              gcode << m_pos.z(); 
              gcode << " , "; 
-             gcode << int(m_z_move - microsteps_5mm); 
+             gcode << int(m_z_move); 
              gcode << "\n";
              gcode << int(m_z_move - microsteps_5mm); // unpeel and reset for next layer (in microsteps)
              gcode << "\n";
