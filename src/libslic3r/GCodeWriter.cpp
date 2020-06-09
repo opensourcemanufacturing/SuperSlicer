@@ -380,6 +380,7 @@ std::string GCodeWriter::travel_to_xy(const Vec2d &point, const std::string &com
         gcode << "  LaserPoint(";
         gcode << "x=" << round(point.x() * 524.28);
         gcode << ", y=" << round(point.y() * 524.28);
+        gcode << "\n SPEED = "; gcode << m_last_speed; gcode << "\n";
         gcode << ", dt=" << round(m_last_speed * m_distance);
         gcode << ")\n";
         return gcode.str();
@@ -450,6 +451,7 @@ std::string GCodeWriter::travel_to_xyz(const Vec3d &point, const std::string &co
         gcode << "  LaserPoint(";
         gcode << "x=" << round(m_pos.x() * 524.28);
         gcode << ", y=" << round(m_pos.y() * 524.28);
+        gcode << "\n SPEED = "; gcode << m_last_speed; gcode << "\n";
         gcode << ", dt=" << round(m_last_speed * m_distance);
         gcode << ")\n";
         return gcode.str();
@@ -585,7 +587,7 @@ std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std:
         if (m_last_pos_x > 0 && m_last_pos_y > 0){ // if the starting point is not the origin point, do this:
             m_side_x = (m_last_pos_x - m_pos.x()) * (m_last_pos_x - m_pos.x());
             m_side_y = (m_last_pos_y - m_pos.y()) * (m_last_pos_y - m_pos.y());
-        } else { // otherwise, do this because it the starting point is the origin
+        } else { // otherwise, do this because the starting point is the origin
             m_side_x = m_pos.x() * m_pos.x();
             m_side_y = m_pos.y() * m_pos.y();
         }
@@ -599,6 +601,7 @@ std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std:
         gcode << "  LaserPoint(";
         gcode << "x=" << round(m_pos.x() * 524.28);
         gcode << ", y=" << round(m_pos.y() * 524.28);
+        gcode << "\n SPEED = "; gcode << m_last_speed; gcode << "\n";
         gcode << ", dt=" << round(m_last_speed * m_distance);
         gcode << ")\n";
         return gcode.str();
@@ -652,6 +655,7 @@ std::string GCodeWriter::extrude_to_xyz(const Vec3d &point, double dE, const std
             gcode << "  LaserPoint(";
             gcode << "x=" << round(m_pos.x() * 524.28);
             gcode << ", y=" << round(m_pos.y() * 524.28);
+            gcode << "\n SPEED = "; gcode << m_last_speed; gcode << "\n";
             gcode << ", dt=" << round(m_last_speed * m_distance);
             gcode << ")\n";
             return gcode.str();
