@@ -489,7 +489,7 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
             gcode << "0x04 ZFeedRate " << XYZF_NUM(this->config.travel_speed.value); // FLP feed rate command
             gcode << "\n";
             gcode << "0x03 ZMove ";
-            gcode << round(m_z_move); // unpeel and set for next layer
+            gcode << round(m_z_move); // first layer height in microsteps
             gcode << "\n";
             return gcode.str();
         }
