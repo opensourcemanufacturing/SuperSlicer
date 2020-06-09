@@ -472,22 +472,27 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
         m_pos.z() = z * 400; // value of next Z move (in microsteps)
         
 
-        if (m_pos.z() > m_last_z){ // If this is not the first layer
+        if (m_pos.z() > m_last_z){ // If this is not the first layer do this:
             m_z_move = m_pos.z() - m_last_z; // layer height = next z move minus last z move
-        } else {
-            m_z_move = m_pos.z(); // If this is the first layer, layer height = next z move
+            std::ostringstream gcode;
+            gcode << "0x04 ZFeedRate " << XYZF_NUM(this->config.travel_speed.value); // FLP feed rate command
+            gcode << "\n";
+            gcode << "0x03 ZMove 2000"; // 5mm peel lift (in microsteps)
+            gcode << "\n";
+            gcode << "0x03 ZMove ";
+            gcode << -2000 + round(m_z_move); // unpeel and set for next layer
+            gcode << "\n";
+            return gcode.str();
+        } else { // otherwise do this, because it is a first layer
+            m_z_move = m_pos.z(); 
+            std::ostringstream gcode;
+            gcode << "0x04 ZFeedRate " << XYZF_NUM(this->config.travel_speed.value); // FLP feed rate command
+            gcode << "\n";
+            gcode << "0x03 ZMove ";
+            gcode << round(m_z_move); // unpeel and set for next layer
+            gcode << "\n";
+            return gcode.str();
         }
-
-        std::ostringstream gcode;
-        gcode << "0x04 ZFeedRate " << XYZF_NUM(this->config.travel_speed.value); // FLP feed rate command
-        gcode << "\n";
-        gcode << "0x03 ZMove 2000"; // 5mm peel lift (in microsteps)
-        gcode << "\n";
-        gcode << "0x03 ZMove ";
-        gcode << -2000 + m_z_move; // unpeel and set for next layer
-        gcode << "\n";
-        return gcode.str();
-
 
     // This sets Z travel for all g-code flavors
     } else {
