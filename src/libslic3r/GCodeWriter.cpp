@@ -468,7 +468,7 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
     if(FLAVOR_IS(gcfopenfl)){        
         m_pos.z() = z;
 
-        if (m_pos.z()) - m_last_z <= 0 {
+        if (m_pos.z() - m_last_z <= 0) {
             m_z_move = m_pos.z();
         } else {
             m_z_move = (m_pos.z()) - m_last_z;
@@ -498,9 +498,8 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
     so we can subtract it from m_pos.z()  
     */
 
-    m_last_z = m_pos.z();
-
     }
+    m_last_z = m_pos.z();
 }
 
 bool GCodeWriter::will_move_z(double z) const
