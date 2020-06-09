@@ -467,7 +467,7 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
 
     if(FLAVOR_IS(gcfopenfl)){ 
         // declare variables
-        int m_z_move; // layer height variable
+        float m_z_move; // layer height variable
         float m_last_z = m_pos.z(); // hold the value of the last Z move
         m_pos.z() = z; // value of next Z move (in microsteps)
         
