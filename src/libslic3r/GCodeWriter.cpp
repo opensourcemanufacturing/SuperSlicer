@@ -484,7 +484,7 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
             gcode << "\n";
             return gcode.str();
         } else { // otherwise do this, because this is the first layer:
-            m_z_move = int(m_pos.z() * 400).; 
+            m_z_move = int(m_pos.z() * 400); 
             gcode << "0x04 ZFeedRate " << XYZF_NUM(this->config.travel_speed.value); // FLP feed rate command
             gcode << "\n";
             gcode << "0x03 ZMove ";
