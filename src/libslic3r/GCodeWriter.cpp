@@ -472,7 +472,7 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
         m_pos.z() = XYZF_NUM(z); // value of next Z move in microsteps
         
 
-        if (m_last_z > 0){ // If this is not the first layer do this:
+        if (m_last_z > 0.000){ // If this is not the first layer do this:
             m_z_move = (m_pos.z() - m_last_z) * 400; // layer height = next z move minus last z move
             std::ostringstream gcode;
             gcode << "0x04 ZFeedRate " << XYZF_NUM(this->config.travel_speed.value); // FLP feed rate command
