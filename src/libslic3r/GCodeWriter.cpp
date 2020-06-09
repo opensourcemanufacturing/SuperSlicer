@@ -440,20 +440,21 @@ std::string GCodeWriter::travel_to_z(double z, const std::string &comment)
     /*  If target Z is lower than current Z but higher than nominal Z
         we don't perform the move but we only adjust the nominal Z by
         reducing the lift amount that will be used for unlift. */
-    if (FLAVOR_IS_NOT(gcfopenfl)){
-        if (!this->will_move_z(z)) {
-            double nominal_z = m_pos.z() - m_lifted;
-            m_lifted -= (z - nominal_z);
-            if (std::abs(m_lifted) < EPSILON)
-                m_lifted = 0.;
-            return "";
-        }
-        
-        /*  In all the other cases, we perform an actual Z move and cancel
-            the lift. */
-        m_lifted = 0;
-        return this->_travel_to_z(z, comment);
+
+    // This does not apply to OpenFL
+
+    if (!this->will_move_z(z) || FLAVOR_IS_NOT(gcfopenfl)) {
+        double nominal_z = m_pos.z() - m_lifted;
+        m_lifted -= (z - nominal_z);
+        if (std::abs(m_lifted) < EPSILON)
+            m_lifted = 0.;
+        return "";
     }
+    
+    /*  In all the other cases, we perform an actual Z move and cancel
+        the lift. */
+    m_lifted = 0;
+    return this->_travel_to_z(z, comment);
 }
 
 std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
