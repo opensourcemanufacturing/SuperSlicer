@@ -440,19 +440,20 @@ std::string GCodeWriter::travel_to_z(double z, const std::string &comment)
     /*  If target Z is lower than current Z but higher than nominal Z
         we don't perform the move but we only adjust the nominal Z by
         reducing the lift amount that will be used for unlift. */
-
-    if (!this->will_move_z(z)) {
-        double nominal_z = m_pos.z() - m_lifted;
-        m_lifted -= (z - nominal_z);
-        if (std::abs(m_lifted) < EPSILON)
-            m_lifted = 0.;
-        return "";
+    if (FLAVOR_IS_NOT(gcfopenfl)){
+        if (!this->will_move_z(z)) {
+            double nominal_z = m_pos.z() - m_lifted;
+            m_lifted -= (z - nominal_z);
+            if (std::abs(m_lifted) < EPSILON)
+                m_lifted = 0.;
+            return "";
+        }
+        
+        /*  In all the other cases, we perform an actual Z move and cancel
+            the lift. */
+        m_lifted = 0;
+        return this->_travel_to_z(z, comment);
     }
-    
-    /*  In all the other cases, we perform an actual Z move and cancel
-        the lift. */
-    m_lifted = 0;
-    return this->_travel_to_z(z, comment);
 }
 
 std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
@@ -471,7 +472,7 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
         if (m_pos.z() - m_last_z <= 0) {
             m_z_move = m_pos.z();
         } else {
-            m_z_move = (m_pos.z()) - m_last_z;
+            m_z_move = m_pos.z() - m_last_z;
         }
         
         
