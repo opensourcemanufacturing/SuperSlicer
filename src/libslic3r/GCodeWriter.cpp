@@ -13,6 +13,12 @@
 #define XYZF_NUM(val) PRECISION(val, 3)
 #define E_NUM(val) PRECISION(val, 5)
 
+/* 
+OpenFL is the flavor used by Formlabs Form1 and Form1+ with OpenFL firmware.
+For more information, see the OpenSourceMachining fork of OpenFL at https://openfl.dev.
+The resulting files are FLP files. This flavor does not use g-code.
+*/
+
 namespace Slic3r {
 
     std::string GCodeWriter::PausePrintCode = "M601";
@@ -321,7 +327,7 @@ std::string GCodeWriter::set_speed(double F, const std::string &comment, const s
     std::ostringstream gcode;
     // Convert mm per min to ticks per second
     // Divide 60,000 (ticks per second) by the feed rate divided by 60
-    // The extrude function will multiply the extrusion distance by this number
+    // The extrude functions will multiply the extrusion distance by this number
     // The result will be the number of ticks between two X/Y points
     m_last_speed = (m_laser_ticks / (F/60));
 
@@ -344,7 +350,9 @@ std::string GCodeWriter::set_speed(double F, const std::string &comment, const s
 
 std::string GCodeWriter::travel_to_xy(const Vec2d &point, const std::string &comment)
 {
-
+    /* This section defines an XY travel move for OpenFL.
+    Laser power is set to zero, but ticks are still needed. 
+    */
     if (FLAVOR_IS(gcfopenfl)){
         m_pos.x() = point.x();
         m_pos.y() = point.y();
@@ -358,6 +366,8 @@ std::string GCodeWriter::travel_to_xy(const Vec2d &point, const std::string &com
         gcode << ", dt=" << round(m_last_speed * (m_tool->E()));
         gcode << ")\n";
         return gcode.str();
+
+    // XY travel moves for all other flavors.
     } else {
         m_pos.x() = point.x();
         m_pos.y() = point.y();
@@ -391,6 +401,11 @@ std::string GCodeWriter::travel_to_xyz(const Vec3d &point, const std::string &co
     
     /*  In all the other cases, we perform an actual XYZ move and cancel
         the lift. */
+
+    /* This section defines a xyz travel moves for OpenFL. This is
+     functionally similar to print to xyz, read that description.
+     We do not want to use this if at all possible. The command
+     will not move the Z axis, but it's best to not use this. */
     if (FLAVOR_IS(gcfopenfl)) {
         m_lifted = 0;
         m_pos = point;
@@ -443,8 +458,9 @@ std::string GCodeWriter::travel_to_z(double z, const std::string &comment)
 std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
 {
 
-    //Constant Z for OpenFL - Form1+ uses relative Z moves
-    
+    // This section sets Z travel FLP commands for the OpenFL Flavor (Formlabs Form1+)
+    // Formlabs uses FLP format, not g-code.
+    // OpenFL Needs Z moves to be relative, not absolute
     if(FLAVOR_IS(gcfopenfl)){        
         m_pos.z() = z;
         
@@ -455,6 +471,8 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
         gcode << PrintObjectConfig::layer_height;
         gcode << "\n";
         return gcode.str();
+
+    // This sets Z travel for all g-code flavors
     } else {
         m_pos.z() = z;
         
@@ -484,6 +502,16 @@ bool GCodeWriter::will_move_z(double z) const
 std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std::string &comment)
 {
     
+    // This section configures XY print moves for OpenFL/Formlabs Form1+.
+    // the m_last_speed command converts the feed rate from mm per minute to 
+    // ticks per second. The laser operates at 60,000 ticks per second.
+    // Then ticks per second are multiplied by the extrude distance.
+    // The result is a dt number, which is the amount of time the 
+    // galvos will take to move the laser from the current point to 
+    // the next point. 
+    // The laser_power variable is linked to the extruder temperature 
+    // and is defined in mW (maximum is 64mW).
+
     if (FLAVOR_IS(gcfopenfl)) {
         m_pos.x() = point.x();
         m_pos.y() = point.y();
@@ -499,6 +527,7 @@ std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std:
         gcode << ", dt=" << round(m_last_speed * (m_tool->E()));
         gcode << ")\n";
         return gcode.str();
+    // This is the XY extrusion settings for all other flavors
     } else {
         m_pos.x() = point.x();
         m_pos.y() = point.y();
@@ -517,6 +546,10 @@ std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std:
 
 std::string GCodeWriter::extrude_to_xyz(const Vec3d &point, double dE, const std::string &comment)
 {
+    // For OpenFL, this section is functionally the same as the extrude_to_xy.
+    // We never move the Z axis while the laser is on, so the power level is set to 0 here.
+    // If possible, SuperSlicer should be configured to never extrude while moving the Z axis, 
+    // So, the goal is for these settings to never be used.
 
         if (FLAVOR_IS(gcfopenfl)) {
             m_pos.x() = point.x();
@@ -533,6 +566,7 @@ std::string GCodeWriter::extrude_to_xyz(const Vec3d &point, double dE, const std
             gcode << ", dt=" << round(m_last_speed * (m_tool->E()));
             gcode << ")\n";
             return gcode.str();
+        // These are the settings for all other flavors.
         } else {
             m_pos.x() = point.x();
             m_pos.y() = point.y();

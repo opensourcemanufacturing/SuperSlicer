@@ -12,6 +12,12 @@
 
 #include <float.h>
 
+/* 
+OpenFL is the flavor used by Formlabs Form1 and Form1+ with OpenFL firmware.
+For more information, see the OpenSourceMachining fork of OpenFL at https://openfl.dev.
+The resulting files are FLP files. This flavor does not use g-code.
+*/
+
 namespace Slic3r {
 
 //! macro used to mark string used at localization,
