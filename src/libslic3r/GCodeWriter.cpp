@@ -520,7 +520,7 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
              gcode << "0x03 ZMove 2000"; // 5mm peel lift (in microsteps)
              gcode << "\n";
              gcode << "0x03 ZMove ";
-             gcode << "\nThis stuff ->"; gcode << m_last_z = m_pos.z(); gcode << " , "; gcode << m_z_move; gcode << " , "; gcode << int(m_z_move - microsteps_5mm); gcode << "\n";
+             gcode << "\nThis stuff -> "; gcode << m_last_z; gcode << " , "; gcode << m_pos.z(); gcode << " , "; gcode << int(m_z_move - microsteps_5mm); gcode << "\n";
              gcode << int(m_z_move - microsteps_5mm); // unpeel and reset for next layer (in microsteps)
              gcode << "\n";
              return gcode.str();
@@ -531,7 +531,7 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
              gcode << "0x03 ZMove ";
              gcode << int(m_z_move); // first layer height in microsteps
              gcode << "\n";
-             gcode << "This stuff ->"; gcode << m_last_z = m_pos.z(); gcode << " , "; gcode << m_z_move; gcode << " , "; gcode << int(m_z_move); gcode << "\n";
+             gcode << "\nThis stuff -> "; gcode << m_last_z; gcode << " , "; gcode << m_pos.z(); gcode << " , "; gcode << int(m_z_move); gcode << "\n";
              return gcode.str();
          }
 
