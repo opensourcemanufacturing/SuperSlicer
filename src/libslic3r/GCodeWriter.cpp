@@ -468,7 +468,7 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
     if(FLAVOR_IS(gcfopenfl)){ 
         // declare variables
         float m_z_move;
-        float m_last_z = m_pos.z();
+        float m_last_z;
         m_pos.z() = z;
 
         if (m_pos.z() > m_last_z){
@@ -484,6 +484,8 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
         gcode << m_z_move;
         gcode << "\n";
         return gcode.str();
+        m_last_z = m_pos.z(); // store current z position for next call of this function
+
 
     // This sets Z travel for all g-code flavors
     } else {
