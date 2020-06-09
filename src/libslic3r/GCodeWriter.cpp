@@ -442,7 +442,7 @@ std::string GCodeWriter::travel_to_z(double z, const std::string &comment)
         reducing the lift amount that will be used for unlift. */
 
 
-    if (!this->will_move_z(z)) {
+    if (!this->will_move_z(z) || FLAVOR_IS_NOT(gcfopenfl)) {
         double nominal_z = m_pos.z() - m_lifted;
         m_lifted -= (z - nominal_z);
         if (std::abs(m_lifted) < EPSILON)
