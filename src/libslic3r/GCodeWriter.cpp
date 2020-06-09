@@ -472,7 +472,7 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
         m_pos.z() = z;
 
         if (m_pos.z() > m_last_z){
-            m_z_move = m_poz.z() - m_last_z;
+            m_z_move = m_pos.z() - m_last_z;
         } else {
             m_z_move = m_poz_z.();
         }
