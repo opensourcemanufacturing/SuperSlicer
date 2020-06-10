@@ -510,7 +510,7 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
         std::ostringstream gcode;
         // declare variables
         const double microsteps_5mm = 2000.0;
-        double m_z_move; // layer height variable
+        int m_z_move; // layer height variable
         double m_last_z = m_pos.z(); // hold the value of the last Z move
         m_pos.z() = z; // value of next Z move in mm
         
@@ -528,7 +528,7 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
             printf("%11.2f ", m_z_move);
             printf("%11.6f ", m_z_move);
             printf("%11.6f\n ", (m_z_move - microsteps_5mm));
-            printf("%d\n ", long(m_z_move - microsteps_5mm));
+            printf("%d\n ", int(m_z_move - microsteps_5mm));
             gcode << "\n";
             return gcode.str();
         } else { // otherwise do this, because this is the first layer:
@@ -542,7 +542,7 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
             printf("%11.2f ", m_z_move);
             printf("%11.6f ", m_z_move);
             printf("%11.6f\n ", (m_z_move - microsteps_5mm));
-            printf("%d\n ", long(m_z_move - microsteps_5mm));
+            printf("%d\n ", int(m_z_move - microsteps_5mm));
             gcode << "\n";
             return gcode.str();
         }
