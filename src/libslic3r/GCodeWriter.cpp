@@ -511,6 +511,7 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
         // declare variables
         const int microsteps_5mm = 2000;
         double m_z_move_d; // layer height variable (double)
+        int m_z_move_i;
         int m_z_move; // layer height variable (integer)
         double m_last_z = m_pos.z(); // hold the value of the last Z move
         m_pos.z() = z; // value of next Z move in mm
