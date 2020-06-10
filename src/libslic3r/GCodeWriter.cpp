@@ -517,36 +517,26 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
         m_pos.z() = z; // value of next Z move in mm
         
 
-        if (m_last_z > 0.){ // If this is not the first layer do this:
-            m_z_move_d = ((m_pos.z() - m_last_z) * 400) * 100; // layer height = next z move minus last z move times 400 microsteps
-            m_z_move_i = round(m_z_move_d);
-            m_z_move = m_z_move_i / 100;
+        if (m_last_z > 0){ // If this is not the first layer do this:
+            m_z_move_d = ((m_pos.z() - m_last_z) * 400) * 1000; // convert to microsteps and move all non zero numbers left of the decimal point
+            m_z_move_i = round(m_z_move_d); // round off anything leftover from the float and cast to integer
+            m_z_move = m_z_move_i / 1000; // divide by 1000 to get rid of trailing zeros.
             gcode << "0x04 ZFeedRate " << XYZF_NUM(this->config.travel_speed.value); // FLP feed rate command
             gcode << "\n";
             gcode << "0x03 ZMove 2000"; // 5mm peel lift (in microsteps)
             gcode << "\n";
             gcode << "0x03 ZMove ";
-            gcode << m_z_move; // unpeel and reset for next layer (in microsteps)
-            printf("%11.6f ", m_last_z);
-            printf("%11.6f ", m_pos.z());
-            printf("%11.6f ", m_z_move_d);
-            printf("%d ", m_z_move_i);
-            printf("%d\n ", m_z_move);
+            gcode << m_z_move - microsteps_5mm; // unpeel and reset for next layer (in microsteps)
             gcode << "\n";
             return gcode.str();
         } else { // otherwise do this, because this is the first layer:
-            m_z_move_d = (m_pos.z() * 400) * 100;
-            m_z_move_i = round(m_z_move_d);
-            m_z_move = m_z_move_i / 100;
+            m_z_move_d = (m_pos.z() * 400) * 1000; // convert to microsteps and move all non zero numbers left of the decimal point
+            m_z_move_i = round(m_z_move_d); // round off anything leftover from the float and cast to integer
+            m_z_move = m_z_move_i / 1000; // divide by 1000 to get rid of trailing zeros.
             gcode << "0x04 ZFeedRate " << XYZF_NUM(this->config.travel_speed.value); // FLP feed rate command
             gcode << "\n";
             gcode << "0x03 ZMove ";
             gcode << m_z_move; // first layer height in microsteps
-            printf("%11.6f ", m_last_z);
-            printf("%11.6f ", m_pos.z());
-            printf("%11.6f ", m_z_move_d);
-            printf("%d ", m_z_move_i);
-            printf("%d\n ", m_z_move);
             gcode << "\n";
             return gcode.str();
         }
