@@ -529,7 +529,7 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
             gcode << m_z_move; // unpeel and reset for next layer (in microsteps)
             printf("%11.6f ", m_last_z);
             printf("%11.6f ", m_pos.z());
-            printf("%d ", m_z_move_d);
+            printf("%11.6f ", m_z_move_d);
             printf("%d ", m_z_move_i);
             printf("%d\n ", m_z_move);
             gcode << "\n";
@@ -544,7 +544,7 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
             gcode << m_z_move; // first layer height in microsteps
             printf("%11.6f ", m_last_z);
             printf("%11.6f ", m_pos.z());
-            printf("%d ", m_z_move_d);
+            printf("%11.6f ", m_z_move_d);
             printf("%d ", m_z_move_i);
             printf("%d\n ", m_z_move);
             gcode << "\n";
