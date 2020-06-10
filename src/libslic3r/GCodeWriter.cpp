@@ -527,10 +527,10 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
              gcode << " , "; 
              gcode << m_pos.z(); 
              gcode << " , "; 
-             gcode << double(m_z_move); 
+             gcode << int(m_z_move); 
              //gcode << "\n";
              gcode << " , ";
-             gcode << double(m_z_move - microsteps_5mm); // unpeel and reset for next layer (in microsteps)
+             gcode << int(m_z_move - microsteps_5mm); // unpeel and reset for next layer (in microsteps)
              gcode << "\n";
              return gcode.str();
          } else { // otherwise do this, because this is the first layer:
@@ -546,7 +546,7 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
              gcode << " , "; 
              gcode << m_pos.z(); 
              gcode << " , "; 
-             gcode << double(m_z_move); 
+             gcode << int(m_z_move); 
              gcode << "\n";
              return gcode.str();
          }
