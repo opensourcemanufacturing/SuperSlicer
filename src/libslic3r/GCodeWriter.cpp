@@ -385,6 +385,7 @@ std::string GCodeWriter::travel_to_xy(const Vec2d &point, const std::string &com
         gcode << "  LaserPoint(";
         gcode << "x=" << round(point.x() * 524.28);
         gcode << ", y=" << round(point.y() * 524.28);
+        gcode << "\n SPEED = "; gcode << m_last_speed; gcode << "\n";
         gcode << ", dt=" << round(m_last_speed * m_distance);
         gcode << ")\n";
         return gcode.str();
@@ -455,6 +456,7 @@ std::string GCodeWriter::travel_to_xyz(const Vec3d &point, const std::string &co
         gcode << "  LaserPoint(";
         gcode << "x=" << round(m_pos.x() * 524.28);
         gcode << ", y=" << round(m_pos.y() * 524.28);
+        gcode << "\n SPEED = "; gcode << m_last_speed; gcode << "\n";
         gcode << ", dt=" << round(m_last_speed * m_distance);
         gcode << ")\n";
         return gcode.str();
@@ -520,7 +522,7 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
             gcode << "0x03 ZMove 2000"; // 5mm peel lift (in microsteps)
             gcode << "\n";
             gcode << "0x03 ZMove ";
-            gcode << int(m_z_move - microsteps_5mm); // unpeel and reset for next layer (in microsteps)
+            gcode << int(floor(m_z_move - microsteps_5mm)); // unpeel and reset for next layer (in microsteps)
             gcode << "\n";
             return gcode.str();
         } else { // otherwise do this, because this is the first layer:
@@ -605,6 +607,7 @@ std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std:
         gcode << "  LaserPoint(";
         gcode << "x=" << round(m_pos.x() * 524.28);
         gcode << ", y=" << round(m_pos.y() * 524.28);
+        gcode << "\n SPEED = "; gcode << m_last_speed; gcode << "\n";
         gcode << ", dt=" << round(m_last_speed * m_distance);
         gcode << ")\n";
         return gcode.str();
@@ -658,6 +661,7 @@ std::string GCodeWriter::extrude_to_xyz(const Vec3d &point, double dE, const std
             gcode << "  LaserPoint(";
             gcode << "x=" << round(m_pos.x() * 524.28);
             gcode << ", y=" << round(m_pos.y() * 524.28);
+            gcode << "\n SPEED = "; gcode << m_last_speed; gcode << "\n";
             gcode << ", dt=" << round(m_last_speed * m_distance);
             gcode << ")\n";
             return gcode.str();
