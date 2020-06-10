@@ -509,10 +509,10 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
     if(FLAVOR_IS(gcfopenfl)){ 
         std::ostringstream gcode;
         // declare variables
-        const int microsteps_5mm = 2000*10000;
+        const double microsteps_5mm = 2000.0;
         double m_z_move; // layer height variable
         double m_last_z = m_pos.z(); // hold the value of the last Z move
-        m_pos.z() = float(z); // value of next Z move in mm
+        m_pos.z() = z; // value of next Z move in mm
         
 
         if (m_last_z > 0.){ // If this is not the first layer do this:
@@ -522,10 +522,10 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
             gcode << "0x03 ZMove 2000"; // 5mm peel lift (in microsteps)
             gcode << "\n";
             gcode << "0x03 ZMove ";
-            m_z_move = m_z_move * 10000;
-            m_z_move = int (m_z_move - microsteps_5mm);
-            m_z_move = m_z_move / 10000;
-            gcode << int(m_z_move); // unpeel and reset for next layer (in microsteps)
+            gcode << int(m_z_move - microsteps_5mm); // unpeel and reset for next layer (in microsteps)
+            printf(%9.5f, m_last_z);
+            printf(%9.5f, m_pos.z());
+            printf(%9.5f, (m_z_move - microsteps_5mm));
             gcode << "\n";
             return gcode.str();
         } else { // otherwise do this, because this is the first layer:
@@ -534,6 +534,9 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
             gcode << "\n";
             gcode << "0x03 ZMove ";
             gcode << int(m_z_move); // first layer height in microsteps
+            printf(%9.5f, m_last_z);
+            printf(%9.5f, m_pos.z());
+            printf(%9.5f, (m_z_move));
             gcode << "\n";
             return gcode.str();
         }
