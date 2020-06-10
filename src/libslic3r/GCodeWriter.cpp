@@ -521,7 +521,7 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
              gcode << "0x03 ZMove 2000"; // 5mm peel lift (in microsteps)
              gcode << "\n";
              gcode << "0x03 ZMove ";
-             gcode << "\n"
+             gcode << "\n";
              gcode << "This stuff -> "; 
              gcode << m_last_z; 
              gcode << " , "; 
