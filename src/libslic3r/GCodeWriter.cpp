@@ -525,7 +525,7 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
             m_z_move = m_z_move * 10000;
             m_z_move = int (m_z_move - microsteps_5mm);
             m_z_move = m_z_move / 10000;
-            gcode << m_z_move; // unpeel and reset for next layer (in microsteps)
+            gcode << int(m_z_move); // unpeel and reset for next layer (in microsteps)
             gcode << "\n";
             return gcode.str();
         } else { // otherwise do this, because this is the first layer:
