@@ -512,7 +512,7 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
         const int microsteps_5mm = 2000*10000;
         double m_z_move; // layer height variable
         double m_last_z = m_pos.z(); // hold the value of the last Z move
-        m_pos.z() = z; // value of next Z move in mm
+        m_pos.z() = float(z); // value of next Z move in mm
         
 
         if (m_last_z > 0.){ // If this is not the first layer do this:
