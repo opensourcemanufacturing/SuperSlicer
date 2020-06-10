@@ -539,7 +539,7 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
             gcode << m_z_move; // first layer height in microsteps
             printf("%11.6f ", m_last_z);
             printf("%11.6f ", m_pos.z());
-            printf("%d\n ", m_z_move - microsteps_5mm);
+            printf("%d\n ", m_z_move);
             gcode << "\n";
             return gcode.str();
         }
