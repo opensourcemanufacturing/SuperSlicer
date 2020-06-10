@@ -510,19 +510,21 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
         std::ostringstream gcode;
         // declare variables
         const double microsteps_5mm = 2000.0;
-        int m_z_move; // layer height variable
+        double m_z_move_d; // layer height variable (double)
+        int m_z_move; // layer height variable (integer)
         double m_last_z = m_pos.z(); // hold the value of the last Z move
         m_pos.z() = z; // value of next Z move in mm
         
 
         if (m_last_z > 0.){ // If this is not the first layer do this:
-            m_z_move = (m_pos.z() - m_last_z) * 400; // layer height = next z move minus last z move times 400 microsteps
+            m_z_move_d = (m_pos.z() - m_last_z - microsteps_5mm) * 40000; // layer height = next z move minus last z move times 400 microsteps
+            m_z_move = floor(m_z_move) / 100;
             gcode << "0x04 ZFeedRate " << XYZF_NUM(this->config.travel_speed.value); // FLP feed rate command
             gcode << "\n";
             gcode << "0x03 ZMove 2000"; // 5mm peel lift (in microsteps)
             gcode << "\n";
             gcode << "0x03 ZMove ";
-            gcode << int(m_z_move - microsteps_5mm); // unpeel and reset for next layer (in microsteps)
+            gcode << m_z_move; // unpeel and reset for next layer (in microsteps)
             printf("%11.6f ", m_last_z);
             printf("%11.6f ", m_pos.z());
             printf("%11.2f ", m_z_move);
@@ -532,11 +534,12 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
             gcode << "\n";
             return gcode.str();
         } else { // otherwise do this, because this is the first layer:
-            m_z_move = m_pos.z() * 400; 
+            m_z_move_d = m_pos.z() * 40000;
+            m_z_move = floor(m_z_move) / 100;
             gcode << "0x04 ZFeedRate " << XYZF_NUM(this->config.travel_speed.value); // FLP feed rate command
             gcode << "\n";
             gcode << "0x03 ZMove ";
-            gcode << int(m_z_move); // first layer height in microsteps
+            gcode << m_z_move; // first layer height in microsteps
             printf("%11.6f ", m_last_z);
             printf("%11.6f ", m_pos.z());
             printf("%11.2f ", m_z_move);
