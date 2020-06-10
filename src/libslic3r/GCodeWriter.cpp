@@ -518,8 +518,7 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
 
         if (m_last_z > 0.){ // If this is not the first layer do this:
             m_z_move_d = ((m_pos.z() - m_last_z) * 40000) - microsteps_5mm; // layer height = next z move minus last z move times 400 microsteps
-            m_z_move = floor(m_z_move_d);
-            m_z_move = m_z_move / 100;
+            m_z_move = floor(m_z_move_d) / 100;
             gcode << "0x04 ZFeedRate " << XYZF_NUM(this->config.travel_speed.value); // FLP feed rate command
             gcode << "\n";
             gcode << "0x03 ZMove 2000"; // 5mm peel lift (in microsteps)
@@ -528,26 +527,19 @@ std::string GCodeWriter::_travel_to_z(double z, const std::string &comment)
             gcode << m_z_move; // unpeel and reset for next layer (in microsteps)
             printf("%11.6f ", m_last_z);
             printf("%11.6f ", m_pos.z());
-            printf("%11.2f ", m_z_move);
-            printf("%11.6f ", m_z_move);
-            printf("%11.6f\n ", (m_z_move - microsteps_5mm));
-            printf("%d\n ", (int) (m_z_move - microsteps_5mm));
+            printf("%d\n ", m_z_move);
             gcode << "\n";
             return gcode.str();
         } else { // otherwise do this, because this is the first layer:
             m_z_move_d = m_pos.z() * 40000;
-            m_z_move = floor(m_z_move_d);
-            m_z_move = m_z_move / 100;
+            m_z_move = floor(m_z_move_d) / 100;
             gcode << "0x04 ZFeedRate " << XYZF_NUM(this->config.travel_speed.value); // FLP feed rate command
             gcode << "\n";
             gcode << "0x03 ZMove ";
             gcode << m_z_move; // first layer height in microsteps
             printf("%11.6f ", m_last_z);
             printf("%11.6f ", m_pos.z());
-            printf("%11.2f ", m_z_move);
-            printf("%11.6f ", m_z_move);
-            printf("%11.6f\n ", (m_z_move - microsteps_5mm));
-            printf("%d\n ", (int)(m_z_move - microsteps_5mm));
+            printf("%d\n ", m_z_move - microsteps_5mm);
             gcode << "\n";
             return gcode.str();
         }
