@@ -585,23 +585,26 @@ std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std:
     // and is defined in mW (maximum is 64mW).
 
     if (FLAVOR_IS(gcfopenfl)) {
-        double m_side_x;
-        double m_side_y;
-        double m_last_pos_x = m_pos.x();
-        double m_last_pos_y = m_pos.y();
+        int m_side_x; // need to multiply this by 524.28 and make an integer
+        int m_side_y; // need to multiply this by 524.28 and make an integer
+        int m_last_pos_x = round(m_pos.x() * 524280) / 1000; // round off anything left of decimal and make an integer.
+        int m_last_pos_y = round(m_pos.y() * 524280) / 1000; // round off anything left of decimal and make an integer.
         m_pos.x() = point.x();
         m_pos.y() = point.y();
+        int m_next_pos_x = round(m_pos.x() * 524280) / 1000; // 
+        int m_next_pos_y = round(m_pos.y() * 524280) / 1000;
+
 
         // Using the Pythagorean theorum to find the distance between the current position and the next position.
 
         if (m_last_pos_x > 0 && m_last_pos_y > 0){ // if the starting point is not the origin point, do this:
-            m_side_x = (m_last_pos_x - m_pos.x()) * (m_last_pos_x - m_pos.x());
-            m_side_y = (m_last_pos_y - m_pos.y()) * (m_last_pos_y - m_pos.y());
+            m_side_x = (m_last_pos_x - m_next_pos_x) * (m_last_pos_x - m_next_pos_x);
+            m_side_y = (m_last_pos_y - m_last_pos_y) * (m_last_pos_y - m_last_pos_y);
         } else { // otherwise, do this because the starting point is the origin
-            m_side_x = m_pos.x() * m_pos.x();
-            m_side_y = m_pos.y() * m_pos.y();
+            m_side_x = m_next_pos_x * m_next_pos_x;
+            m_side_y = m_next_pos_y * m_next_pos_y;
         }
-        double m_distance = sqrt(m_side_x + m_side_y);
+        int m_distance = round(sqrt(m_side_x + m_side_y));
 
         std::ostringstream gcode;
         gcode << "0x01 LaserPowerLevel ";
@@ -609,9 +612,9 @@ std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std:
         gcode << "\n";
         gcode << "0x00 XYMove 1\n";
         gcode << "  LaserPoint(";
-        gcode << "x=" << round(m_pos.x() * 524.28);
-        gcode << ", y=" << round(m_pos.y() * 524.28);
-        gcode << ", dt=" << round(m_last_speed * m_distance);
+        gcode << "x=" << m_next_pos_x;
+        gcode << ", y=" << m_next_pos_y;
+        gcode << ", dt=" << m_last_speed * m_distance;
         gcode << ")\n";
         return gcode.str();
     // This is the XY extrusion settings for all other flavors
