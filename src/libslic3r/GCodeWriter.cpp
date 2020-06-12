@@ -597,13 +597,13 @@ std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std:
 
         // Using the Pythagorean theorum to find the distance between the current position and the next position.
 
-        if (m_last_pos_x > 0 && m_last_pos_y > 0){ // if the starting point is not the origin point, do this:
-            m_side_x = (m_next_pos_x - m_last_pos_x) * (m_next_pos_x - m_last_pos_x);
-            m_side_y = (m_next_pos_y - m_last_pos_y) * (m_next_pos_y - m_last_pos_y);
-        } else { // otherwise, do this because the starting point is the origin
-            m_side_x = m_next_pos_x * m_next_pos_x;
-            m_side_y = m_next_pos_y * m_next_pos_y;
-        }
+        // if (m_last_pos_x > 0  m_last_pos_y > 0){ // if the starting point is not the origin point, do this:
+        m_side_x = (m_next_pos_x - m_last_pos_x) * (m_next_pos_x - m_last_pos_x);
+        m_side_y = (m_next_pos_y - m_last_pos_y) * (m_next_pos_y - m_last_pos_y);
+        // } else { // otherwise, do this because the starting point is the origin
+        //     m_side_x = m_next_pos_x * m_next_pos_x;
+        //     m_side_y = m_next_pos_y * m_next_pos_y;
+        // }
         int m_distance = round(sqrt((m_side_x + m_side_y)));
 
         std::ostringstream gcode;
