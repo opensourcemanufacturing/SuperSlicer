@@ -587,12 +587,12 @@ std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std:
     if (FLAVOR_IS(gcfopenfl)) {
         int m_side_x; // need to multiply this by 524.28 and make an integer
         int m_side_y; // need to multiply this by 524.28 and make an integer
-        int m_last_pos_x = round(m_pos.x() * 524280) / 1000; // round off anything left of decimal and make an integer.
-        int m_last_pos_y = round(m_pos.y() * 524280) / 1000; // round off anything left of decimal and make an integer.
+        int m_last_pos_x = round((m_pos.x() * 524.280)); // round off anything left of decimal and make an integer.
+        int m_last_pos_y = round((m_pos.y() * 524.280)); // round off anything left of decimal and make an integer.
         m_pos.x() = point.x();
         m_pos.y() = point.y();
-        int m_next_pos_x = round(m_pos.x() * 524280) / 1000; // 
-        int m_next_pos_y = round(m_pos.y() * 524280) / 1000;
+        int m_next_pos_x = round((m_pos.x() * 524.28)); // 
+        int m_next_pos_y = round((m_pos.y() * 524.28));
 
 
         // Using the Pythagorean theorum to find the distance between the current position and the next position.
@@ -604,7 +604,7 @@ std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std:
             m_side_x = m_next_pos_x * m_next_pos_x;
             m_side_y = m_next_pos_y * m_next_pos_y;
         }
-        int m_distance = round(sqrt(m_side_x + m_side_y));
+        int m_distance = round(sqrt((m_side_x + m_side_y));
 
         std::ostringstream gcode;
         gcode << "0x01 LaserPowerLevel ";
