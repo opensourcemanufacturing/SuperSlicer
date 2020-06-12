@@ -614,7 +614,7 @@ std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std:
         gcode << "  LaserPoint(";
         gcode << "x=" << m_next_pos_x;
         gcode << ", y=" << m_next_pos_y;
-        gcode << ", dt=" << m_last_speed / m_distance;
+        gcode << ", dt=" << m_distance;
         gcode << ")\n";
         return gcode.str();
     // This is the XY extrusion settings for all other flavors
