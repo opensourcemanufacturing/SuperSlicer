@@ -604,7 +604,7 @@ std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std:
             m_side_x = m_next_pos_x * m_next_pos_x;
             m_side_y = m_next_pos_y * m_next_pos_y;
         }
-        int m_distance = round(sqrt((m_side_x + m_side_y));
+        int m_distance = round(sqrt((m_side_x + m_side_y)));
 
         std::ostringstream gcode;
         gcode << "0x01 LaserPowerLevel ";
