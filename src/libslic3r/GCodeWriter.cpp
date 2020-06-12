@@ -385,7 +385,7 @@ std::string GCodeWriter::travel_to_xy(const Vec2d &point, const std::string &com
         gcode << "  LaserPoint(";
         gcode << "x=" << round(point.x() * 524.28);
         gcode << ", y=" << round(point.y() * 524.28);
-        gcode << ", dt=" << round(m_last_speed * m_distance);
+        gcode << ", dt=" << m_distance;
         gcode << ")\n";
         return gcode.str();
 
