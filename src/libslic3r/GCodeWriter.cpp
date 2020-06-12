@@ -331,11 +331,11 @@ std::string GCodeWriter::set_speed(double F, const std::string &comment, const s
     // The XY Move functions will multiply the XY distance by this number
     // The result will be the number of ticks between two X/Y points
 
-    if (F > 0){ // if F is zero, we will use the travel speed instead.
-        m_last_speed = (m_laser_ticks / (F/60));
-    } else {
-        m_last_speed = (m_laser_ticks / ((this->config.travel_speed.value)/60));
-    }
+    //if (F > 0){ // if F is zero, we will use the travel speed instead.
+    int m_last_speed = round(m_laser_ticks / (F/60));
+    //} else {
+        //m_last_speed = (m_laser_ticks / ((this->config.travel_speed.value)/60));
+    //}
 
     if (FLAVOR_IS(gcfopenfl)){
         assert(F > 0.);
