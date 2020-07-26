@@ -332,7 +332,7 @@ std::string GCodeWriter::set_speed(double F, const std::string &comment, const s
     // The result will be the number of ticks between two X/Y points
 
     //if (F > 0){ // if F is zero, we will use the travel speed instead.
-    int m_last_speed = round(m_laser_ticks / (F/60));
+    int m_last_speed = XYZF_NUM(F);
     //} else {
         //m_last_speed = (m_laser_ticks / ((this->config.travel_speed.value)/60));
     //}
@@ -360,36 +360,40 @@ std::string GCodeWriter::travel_to_xy(const Vec2d &point, const std::string &com
     Laser power is set to zero, but ticks are still needed. 
     */
     if (FLAVOR_IS(gcfopenfl)){
-        int m_side_x; // need to multiply this by 524.28 and make an integer
-        int m_side_y; // need to multiply this by 524.28 and make an integer
-        int m_last_pos_x = round((m_pos.x() * 524.280)); // round off anything left of decimal and make an integer.
-        int m_last_pos_y = round((m_pos.y() * 524.280)); // round off anything left of decimal and make an integer.
+
+        m_last_pos_x = m_pos.x();
+        m_last_pos_y = m_pos.y();
         m_pos.x() = point.x();
         m_pos.y() = point.y();
-        int m_next_pos_x = round((m_pos.x() * 524.28)); // 
-        int m_next_pos_y = round((m_pos.y() * 524.28));
+        
 
 
         // Using the Pythagorean theorum to find the distance between the current position and the next position.
 
-        // if (m_last_pos_x > 0  m_last_pos_y > 0){ // if the starting point is not the origin point, do this:
-        m_side_x = (m_next_pos_x - m_last_pos_x) * (m_next_pos_x - m_last_pos_x);
-        m_side_y = (m_next_pos_y - m_last_pos_y) * (m_next_pos_y - m_last_pos_y);
-        // } else { // otherwise, do this because the starting point is the origin
-        //     m_side_x = m_next_pos_x * m_next_pos_x;
-        //     m_side_y = m_next_pos_y * m_next_pos_y;
-        // }
-        int m_distance = round(sqrt((m_side_x + m_side_y)));
+        if (m_last_pos_x > 0 && m_last_pos_y > 0){ // if the starting point is not the origin point, do this:
+            m_side_x = (m_pos.x - m_last_pos_x) * (m_pos_x - m_last_pos_x);
+            m_side_y = (m_pos_y - m_last_pos_y) * (m_pos_y - m_last_pos_y);
+            m_distance = round(sqrt((m_side_x + m_side_y)));
+            m_dt_s = m_distance / m_last_speed;
 
-        std::ostringstream gcode;
-        gcode << "0x01 LaserPowerLevel 0\n";
-        gcode << "0x00 XYMove 1\n";
-        gcode << "  LaserPoint(";
-        gcode << "x=" << round(point.x() * 524.28);
-        gcode << ", y=" << round(point.y() * 524.28);
-        gcode << ", dt=" << m_distance;
-        gcode << ")\n";
-        return gcode.str();
+            std::ostringstream gcode;
+            gcode << "(("
+            << m_last_pos_x << ","
+            << m_last_pos_y << "), ("
+            << m_pos.x() << ", "
+            << m_pos.y() << "), "
+            << m_dt_s << ", " 
+            << "mW=" << laser_power
+            << ")";
+            return gcode.str();
+        } 
+        else { // otherwise, do nothing because this point is the origin:
+            std::ostringstream gcode;
+            gcode <<"";
+            return gcode.str();
+        }
+
+        
 
     // XY travel moves for all other flavors.
     } else {
@@ -577,50 +581,41 @@ bool GCodeWriter::will_move_z(double z) const
 std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std::string &comment)
 {
     
-    // This section configures XY print moves for OpenFL/Formlabs Form1+.
-    // the m_last_speed command converts the feed rate from mm per minute to 
-    // ticks per second. The laser operates at 60,000 ticks per second.
-    // Then ticks per second are multiplied by the extrude distance.
-    // The result is a dt number, which is the amount of time the 
-    // galvos will take to move the laser from the current point to 
-    // the next point. 
-    // The laser_power variable is linked to the extruder temperature 
-    // and is defined in mW (maximum is 64mW).
+    if (FLAVOR_IS(gcfopenfl)){
 
-    if (FLAVOR_IS(gcfopenfl)) {
-        int m_side_x; // need to multiply this by 524.28 and make an integer
-        int m_side_y; // need to multiply this by 524.28 and make an integer
-        int m_last_pos_x = round((m_pos.x() * 524.280)); // round off anything left of decimal and make an integer.
-        int m_last_pos_y = round((m_pos.y() * 524.280)); // round off anything left of decimal and make an integer.
+        m_last_pos_x = m_pos.x();
+        m_last_pos_y = m_pos.y();
         m_pos.x() = point.x();
         m_pos.y() = point.y();
-        int m_next_pos_x = round((m_pos.x() * 524.28)); // 
-        int m_next_pos_y = round((m_pos.y() * 524.28));
+        
 
 
         // Using the Pythagorean theorum to find the distance between the current position and the next position.
 
-        // if (m_last_pos_x > 0  m_last_pos_y > 0){ // if the starting point is not the origin point, do this:
-        m_side_x = (m_next_pos_x - m_last_pos_x) * (m_next_pos_x - m_last_pos_x);
-        m_side_y = (m_next_pos_y - m_last_pos_y) * (m_next_pos_y - m_last_pos_y);
-        // } else { // otherwise, do this because the starting point is the origin
-        //     m_side_x = m_next_pos_x * m_next_pos_x;
-        //     m_side_y = m_next_pos_y * m_next_pos_y;
-        // }
-        int m_distance = round(sqrt((m_side_x + m_side_y)));
+        if (m_last_pos_x > 0 && m_last_pos_y > 0){ // if the starting point is not the origin point, do this:
+            m_side_x = (m_pos.x - m_last_pos_x) * (m_pos_x - m_last_pos_x);
+            m_side_y = (m_pos_y - m_last_pos_y) * (m_pos_y - m_last_pos_y);
+            m_distance = round(sqrt((m_side_x + m_side_y)));
+            m_dt_s = m_distance / m_last_speed;
 
-        std::ostringstream gcode;
-        gcode << "0x01 LaserPowerLevel ";
-        gcode << laser_power; 
-        gcode << "\n";
-        gcode << "0x00 XYMove 1\n";
-        gcode << "  LaserPoint(";
-        gcode << "x=" << m_next_pos_x;
-        gcode << ", y=" << m_next_pos_y;
-        gcode << ", dt=" << m_distance;
-        gcode << ")\n";
-        return gcode.str();
-    // This is the XY extrusion settings for all other flavors
+            std::ostringstream gcode;
+            gcode << "(("
+            << m_last_pos_x << ","
+            << m_last_pos_y << "), ("
+            << m_pos.x() << ", "
+            << m_pos.y() << "), "
+            << m_dt_s << ", "
+            << "mW=" << laser_power
+            << ")";
+            return gcode.str();
+        } 
+        else { // otherwise, do nothing because this point is the origin:
+            std::ostringstream gcode;
+            gcode <<"";
+            return gcode.str();
+        }
+
+    // XY travel moves for all other flavors.
     } else {
         m_pos.x() = point.x();
         m_pos.y() = point.y();
