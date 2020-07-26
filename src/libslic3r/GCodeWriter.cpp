@@ -363,6 +363,8 @@ std::string GCodeWriter::travel_to_xy(const Vec2d &point, const std::string &com
 
         float m_last_pos_x = m_pos.x();
         float m_last_pos_y = m_pos.y();
+        float m_side_x;
+        float m_side_y;
         m_pos.x() = point.x();
         m_pos.y() = point.y();
         
