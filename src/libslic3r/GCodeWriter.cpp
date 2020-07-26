@@ -361,8 +361,8 @@ std::string GCodeWriter::travel_to_xy(const Vec2d &point, const std::string &com
     */
     if (FLAVOR_IS(gcfopenfl)){
 
-        m_last_pos_x = m_pos.x();
-        m_last_pos_y = m_pos.y();
+        float m_last_pos_x = m_pos.x();
+        float m_last_pos_y = m_pos.y();
         float m_side_x;
         float m_side_y;
         m_pos.x() = point.x();
@@ -585,8 +585,8 @@ std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std:
     
     if (FLAVOR_IS(gcfopenfl)){
 
-        m_last_pos_x = m_pos.x();
-        m_last_pos_y = m_pos.y();
+        float m_last_pos_x = m_pos.x();
+        float m_last_pos_y = m_pos.y();
         float m_side_x;
         float m_side_y;
         m_pos.x() = point.x();
